@@ -1,3 +1,5 @@
+@import "../../styles/kingo-fonts.less";
+
 .vip-card {
     background-color: #1a1a1a;
     color: #fff;
@@ -6,21 +8,36 @@
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
     position: relative;
     overflow: hidden;
-    height: 200px;
+    height: 350px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.vip-card-bg {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(60deg);
+    z-index: -1;
+    display: flex;
 }
 
 /* Background logo watermark */
-.vip-card:after {
-    content: '';
-    position: absolute;
-    right: -40px;
-    top: 50%;
-    width: 150px;
-    height: 150px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 20px;
-    transform: rotate(45deg) translateY(-50%);
-    z-index: 1;
+.circle-1 {
+    width: 800px;
+    height: 800px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 100%;
+}
+
+.circle-2 {
+    width: 800px;
+    height: 800px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 100%;
 }
 
 .vip-card-header {
@@ -29,50 +46,62 @@
     margin-bottom: 30px;
 }
 
-.vip-card-logo {
+.vip-logo-expire-date-wrapper {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
 }
 
 .logo-letter {
-    color: #ffd700;
-    font-size: 32px;
-    font-weight: bold;
-    margin-right: 6px;
-}
-
-.logo-text {
-    font-size: 22px;
-    font-weight: 500;
-}
-
-.vip-card-content {
-    position: relative;
-    z-index: 2;
-}
-
-.vip-card-title {
-    font-size: 28px;
-    font-weight: bold;
-    margin-bottom: 40px;
+    color: #bf89f5;
+    font-style: italic;
+    font-size: 2em;
     letter-spacing: 2px;
+    font-weight: 900;
+    font-family: "Kingo";
 }
 
-.vip-card-details {
-    margin-top: 20px;
+.expire-date {
+    color: #ccc;
+    font-size: 24px;
 }
 
-.vip-card-validity {
-    font-size: 18px;
-    color: rgba(255, 255, 255, 0.7);
-    margin-bottom: 8px;
-    display: block;
+.vip-card-footer {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
 }
 
-.vip-card-remaining,
-.vip-card-expire {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.6);
-    margin: 4px 0;
-    display: block;
+.vip-card-remaining-text {
+    color: #ccc;
+    font-size: 24px;
+}
+
+.vip-card-remaining-days {
+    color: #bf89f5;
+    font-size: 2.5em;
+    font-weight: 900;
+    line-height: 100%;
+    font-family: "Kingo";
+}
+
+.vip-card-type {
+    position: absolute;
+    top: 36px;
+    right: 0;
+    width: 100px;
+    background-color: #ffffff71;
+    padding: 12px 12px 12px 24px;
+    border-radius: 1000px 0 0 1000px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vip-card-type-text {
+    color: #fff;
+    font-size: 24px;
+    line-height: 100%;
 }
