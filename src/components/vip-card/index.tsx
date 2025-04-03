@@ -7,7 +7,7 @@ const VipCard = ({ cardType, remainingDays, expireDate }) => {
             {/* 头部 */}
             <View className='vip-card-header'>
                 <View className='vip-logo-expire-date-wrapper'>
-                    <Text className='logo-letter'>VIP CARD</Text>
+                    <Text className='logo-letter'>Entity VIP</Text>
                     <Text className='expire-date'>{expireDate} 过期</Text>
                 </View>
             </View>

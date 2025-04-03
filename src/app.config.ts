@@ -35,6 +35,6 @@ export default defineAppConfig({
     color: '#bfbfbf',
     selectedColor: '#2c2c2c',
     backgroundColor: '#ffffff',
-    borderStyle: 'black'
+    borderStyle: 'white'
   }
 })

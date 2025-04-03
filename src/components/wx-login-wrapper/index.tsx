@@ -72,7 +72,7 @@ function WeappLoginButton(props: WeappLoginButtonProps) {
 
             const res = await Taro.request({
                 method: 'POST',
-                url: 'http://43.161.237.243/api/auth/login',
+                url: 'http://43.161.237.243:3000/api/auth/login',
                 data: { code, encryptedData, iv }
             });
 

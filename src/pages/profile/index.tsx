@@ -9,7 +9,7 @@ import Taro from '@tarojs/taro';
 const Profile: React.FC = () => {
     const [avatar, setAvatar] = useState(DefaultAvatar);
     const [name, setName] = useState('xxx');
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(true);
 
     const handleLoginSuccess = (token: string, userInfo) => {
         console.log('登录成功:', userInfo);
@@ -31,7 +31,12 @@ const Profile: React.FC = () => {
             console.log('token:', res);
             if (res.errMsg === 'getStorage:ok') {
                 setIsLoggedIn(true);
+            } else {
+                setIsLoggedIn(false);
             }
+        }).catch((err) => {
+            setIsLoggedIn(false);
+            console.log('getStorage error:', err);
         });
         Taro.getStorage({ key: 'userInfo' }).then((res) => {
             console.log('userInfo:', res);
@@ -39,6 +44,9 @@ const Profile: React.FC = () => {
                 setAvatar(res.data.avatarUrl);
                 setName(res.data.nickName);
             }
+        }).catch((err) => {
+            setIsLoggedIn(false);
+            console.log('getStorage error:', err);
         });
     }, []);
 
