@@ -57,6 +57,19 @@ const CtaContainer = () => {
         });
     };
 
+    // 处理预约教练点击事件
+    const handleBookCoach = () => {
+        Taro.switchTab({
+            url: '/pages/appointment/index'
+        }).catch(error => {
+            console.error('跳转失败:', error);
+            Taro.showToast({
+                title: '跳转失败，请稍后重试',
+                icon: 'none'
+            });
+        });
+    };
+
     return (
         <View className={styles.cta_container}>
             <View className={styles.cta_item} onClick={handleNavigateToGym}>
@@ -71,7 +84,7 @@ const CtaContainer = () => {
                     )
                 }
             </View>
-            <View className={styles.cta_item}>
+            <View className={styles.cta_item} onClick={handleBookCoach}>
                 <Image src={BookTime} className={styles.cta_item_image} />
                 <Text className={styles.cta_item_subtitle}>BOOK A COACH</Text>
                 <Text className={styles.cta_item_title}>预约教练</Text>
