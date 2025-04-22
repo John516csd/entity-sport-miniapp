@@ -1,4 +1,9 @@
 export default defineAppConfig({
+  permission: {
+    'scope.userLocation': {
+      desc: '获取您的地理位置以提供附近服务' // 需明确用途[1,3,4](@ref)
+    }
+  },
   pages: [
     'pages/index/index',
     'pages/login/index',
