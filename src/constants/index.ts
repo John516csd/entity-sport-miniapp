@@ -1,1 +1,1 @@
-export const BASE_API_URL = 'https://api.mc-massage.online';
+export const BASE_API_URL = 'https://47.106.81.130';

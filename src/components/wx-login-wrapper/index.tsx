@@ -4,6 +4,8 @@ import Taro from "@tarojs/taro";
 import { useState } from "react";
 import "./index.less";
 import { BASE_API_URL } from "../../constants";
+import { http } from "../../utils/request";
+import { login } from "../../api";
 
 interface WeappLoginButtonProps {
   className?: string;
@@ -28,7 +30,7 @@ function WeappLoginButton(props: WeappLoginButtonProps) {
         const profileRes = await Taro.getUserProfile({
           desc: "用于完善会员资料",
         });
-        console.log("🚀 ~ handleGetUserInfo ~ profileRes:", profileRes)
+        console.log("🚀 ~ handleGetUserInfo ~ profileRes:", profileRes);
 
         const { userInfo } = profileRes;
         return userInfo;
@@ -72,26 +74,17 @@ function WeappLoginButton(props: WeappLoginButtonProps) {
       console.log("🚀 ~ onGetUserInfo ~ code:", code);
       console.log("🚀 ~ onGetPhoneNumber ~ detail:", e?.detail);
 
-      const res = await Taro.request({
-        method: "POST",
-        url: `${BASE_API_URL}/api/v1/wechat/login`,
-        data: {
-          code,
-        },
+      // 使用封装的请求方法
+      const res = await login(code);
+      console.log("🚀 ~ handleGetPhoneNumber ~ res:", res);
+
+      const { access_token } = res;
+      onSuccess && onSuccess(access_token, userInfo);
+
+      Taro.showToast({
+        title: "登录成功",
+        icon: "success",
       });
-
-      console.log("🚀 ~ onGetPhoneNumber ~ res:", res);
-
-      if (res.statusCode === 200) {
-        const { token } = res.data;
-
-        onSuccess && onSuccess(token, userInfo);
-
-        Taro.showToast({
-          title: "登录成功",
-          icon: "success",
-        });
-      }
     } catch (error) {
       console.error("登录失败:", error);
       Taro.showToast({
