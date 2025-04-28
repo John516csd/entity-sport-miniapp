@@ -8,7 +8,8 @@ export default defineAppConfig({
     'pages/index/index',
     'pages/login/index',
     'pages/appointment/index',
-    'pages/profile/index'
+    'pages/profile/index',
+    'pages/test/index'
   ],
   window: {
     backgroundTextStyle: 'light',

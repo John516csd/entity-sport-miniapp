@@ -1,0 +1,475 @@
+.test-container {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.header {
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e1e1e1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+}
+
+.welcome {
+  font-size: 16px;
+  color: #666;
+}
+
+.test-buttons {
+  flex: 1;
+  margin-bottom: 20px;
+}
+
+.section {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+  display: block;
+}
+
+.sub-title {
+  font-size: 14px;
+  color: #666;
+  margin: 5px 0;
+  display: block;
+}
+
+.test-button {
+  margin-bottom: 10px;
+  background-color: #007aff;
+  color: white;
+}
+
+.test-button:active {
+  background-color: #0051a8;
+}
+
+.coach-list,
+.membership-list,
+.contract-list {
+  white-space: nowrap;
+  margin: 10px 0;
+  padding: 5px 0;
+}
+
+.coach-name {
+  font-weight: 500;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.selected-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #007aff;
+  color: white;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 0 6px 0 6px;
+}
+
+.coach-item,
+.membership-item,
+.contract-item {
+  display: inline-block;
+  margin-right: 10px;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-radius: 6px;
+  min-width: 150px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.membership-section {
+  margin-top: 10px;
+}
+
+.membership-list-vertical {
+  max-height: 300px;
+  margin: 10px 0;
+}
+
+.membership-item-vertical {
+  margin-bottom: 10px;
+  padding: 12px;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.membership-item-vertical.selected {
+  background-color: #e2f2ff;
+  border: 2px solid #007aff;
+}
+
+.membership-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #ddd;
+  position: relative;
+}
+
+.membership-title {
+  font-weight: bold;
+  font-size: 16px;
+  color: #333;
+}
+
+.detail-button {
+  background-color: #007aff;
+  color: white;
+  padding: 0 10px;
+}
+
+.membership-content {
+  padding: 5px 0;
+}
+
+.membership-info-item {
+  display: flex;
+  margin-bottom: 5px;
+}
+
+.info-label {
+  width: 80px;
+  color: #666;
+  font-size: 14px;
+}
+
+.info-value {
+  flex: 1;
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+.status-active {
+  color: #4cd964;
+}
+
+.status-expired {
+  color: #ff3b30;
+}
+
+.status-suspended {
+  color: #ff9500;
+}
+
+.coach-item.selected,
+.membership-item.selected {
+  background-color: #e2f2ff;
+  border: 2px solid #007aff;
+}
+
+.coach-actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 5px;
+}
+
+.action-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.appointments-list {
+  margin-top: 15px;
+}
+
+.appointment-item {
+  padding: 12px;
+  background-color: #fff;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.appointment-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.appointment-time {
+  font-weight: bold;
+  color: #333;
+}
+
+.appointment-coach {
+  color: #666;
+}
+
+.appointment-status {
+  color: #007aff;
+}
+
+.cancel-button {
+  background-color: #ff3b30;
+  color: white;
+}
+
+.no-data {
+  display: block;
+  text-align: center;
+  padding: 20px;
+  color: #999;
+}
+
+.result-container {
+  height: 40%;
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.result-scroll {
+  height: calc(100% - 30px);
+  padding: 10px;
+  background-color: #f7f7f7;
+  border-radius: 6px;
+}
+
+.result-json {
+  font-family: monospace;
+  white-space: pre-wrap;
+  font-size: 14px;
+}
+
+/* 详情模态框样式 */
+.detail-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.detail-modal {
+  width: 80%;
+  max-width: 500px;
+  max-height: 80%;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.detail-modal-header {
+  padding: 15px;
+  border-bottom: 1px solid #e1e1e1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.detail-modal-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+.detail-modal-close {
+  font-size: 24px;
+  color: #999;
+  cursor: pointer;
+  padding: 0 5px;
+}
+
+.detail-modal-body {
+  padding: 15px;
+  flex: 1;
+  overflow-y: auto;
+  max-height: 60vh;
+}
+
+.detail-content {
+  padding: 5px;
+}
+
+.detail-item {
+  display: flex;
+  margin-bottom: 15px;
+  align-items: flex-start;
+}
+
+.detail-label {
+  min-width: 80px;
+  color: #666;
+  font-size: 14px;
+}
+
+.detail-value {
+  flex: 1;
+  font-size: 14px;
+  color: #333;
+  word-break: break-all;
+}
+
+.detail-json {
+  font-family: monospace;
+  white-space: pre-wrap;
+  font-size: 14px;
+}
+
+.coach-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
+  margin-top: 5px;
+}
+
+.time-slots-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.time-slot-item {
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-radius: 6px;
+}
+
+.time-slot-time {
+  font-weight: 500;
+  color: #333;
+}
+
+.create-appointment-section {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 1px dashed #ccc;
+}
+
+.selection-status {
+  margin-bottom: 15px;
+}
+
+.selection-item {
+  display: flex;
+  margin-bottom: 8px;
+  align-items: center;
+}
+
+.selection-label {
+  width: 60px;
+  font-weight: 500;
+  color: #666;
+}
+
+.selection-value {
+  flex: 1;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+.selected-value {
+  color: #4cd964;
+  background-color: rgba(76, 217, 100, 0.1);
+}
+
+.missing-value {
+  color: #ff3b30;
+  background-color: rgba(255, 59, 48, 0.1);
+}
+
+.disabled-button {
+  opacity: 0.6;
+}
+
+/* 时间段选择相关样式 */
+.time-slots-selection {
+  margin: 10px 0;
+  padding: 10px;
+  background-color: rgba(0, 122, 255, 0.05);
+  border-radius: 6px;
+  border: 1px solid rgba(0, 122, 255, 0.2);
+}
+
+.time-slots-scroll {
+  max-height: 200px;
+  margin-top: 8px;
+}
+
+.time-slot-selectable {
+  padding: 10px 12px;
+  background-color: #f0f0f0;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  position: relative;
+  cursor: pointer;
+}
+
+.time-slot-selectable.selected {
+  background-color: #e2f2ff;
+  border: 2px solid #007aff;
+  padding: 8px 10px;
+}
+
+.time-slot-text {
+  font-weight: 500;
+  color: #333;
+  font-size: 15px;
+}
+
+.time-selected {
+  top: -2px;
+  right: -2px;
+}
+
+.no-time-slots {
+  margin: 15px 0;
+  padding: 10px;
+  background-color: rgba(255, 59, 48, 0.1);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 59, 48, 0.2);
+}
+
+.warning-text {
+  color: #ff3b30;
+  font-size: 14px;
+} 

@@ -79,6 +79,20 @@ function WeappLoginButton(props: WeappLoginButtonProps) {
       console.log("🚀 ~ handleGetPhoneNumber ~ res:", res);
 
       const { access_token } = res;
+      
+      // 确保存储token正确
+      if (access_token) {
+        try {
+          Taro.setStorageSync('token', access_token);
+          console.log('Token saved successfully:', access_token);
+          console.log('Storage keys after save:', Taro.getStorageInfoSync().keys);
+        } catch (storageError) {
+          console.error('Failed to save token:', storageError);
+        }
+      } else {
+        console.error('No access_token in response:', res);
+      }
+      
       onSuccess && onSuccess(access_token, userInfo);
 
       Taro.showToast({

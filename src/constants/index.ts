@@ -1,1 +1,1 @@
-export const BASE_API_URL = 'https://47.106.81.130';
+export const BASE_API_URL = 'https://www.anteti.cn';

@@ -6,6 +6,7 @@ interface ResponseData<T = any> {
   code: number;
   data: T;
   message: string;
+  request_id: string;
 }
 
 // 请求配置接口
@@ -24,7 +25,7 @@ const DEFAULT_OPTIONS = {
 // 请求拦截器
 const requestInterceptor = (options: RequestOptions) => {
   const token = Taro.getStorageSync('token');
-
+  
   const finalOptions = {
     ...DEFAULT_OPTIONS,
     ...options,
@@ -35,6 +36,9 @@ const requestInterceptor = (options: RequestOptions) => {
     },
     url: `${BASE_API_URL}${options.url}`,
   };
+
+  // 请求日志
+  console.log(`🚀～ request: ${finalOptions.method} ${finalOptions.url}`, finalOptions.data || '');
 
   if (finalOptions.showLoading) {
     Taro.showLoading({ title: '加载中...' });
@@ -47,9 +51,16 @@ const requestInterceptor = (options: RequestOptions) => {
 const responseInterceptor = async (res: Taro.request.SuccessCallbackResult<ResponseData>) => {
   const { statusCode, data } = res;
 
+  // 响应日志
+  console.log(`🚀～ response: ${statusCode}`, data);
+
   // 请求成功
   if (statusCode === 200) {
-    return data;
+    if (data.code === 200) {
+      return data.data; // 解包data字段返回真正的响应数据
+    } else {
+      throw new Error(data.message || '请求失败');
+    }
   }
 
   // 401 未授权
@@ -64,21 +75,25 @@ const responseInterceptor = async (res: Taro.request.SuccessCallbackResult<Respo
 
 // 统一请求方法
 const request = async <T = any>(options: RequestOptions): Promise<T> => {
+  const shouldShowLoading = options.showLoading !== false;
+  
   try {
+    if (shouldShowLoading) {
+      Taro.showLoading({ title: '加载中...' });
+    }
+    
     const finalOptions = requestInterceptor(options);
     const res = await Taro.request(finalOptions);
     const data = await responseInterceptor(res);
     return data as T;
   } catch (error) {
-    if (options.showError) {
-      Taro.showToast({
-        title: error.message || '请求失败',
-        icon: 'none',
-      });
-    }
+    Taro.showToast({
+      title: error.message || '请求失败',
+      icon: 'none',
+    });
     throw error;
   } finally {
-    if (options.showLoading) {
+    if (shouldShowLoading) {
       Taro.hideLoading();
     }
   }
