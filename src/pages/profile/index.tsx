@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image } from '@tarojs/components';
-import './index.less';
 import DefaultAvatar from '../../assets/profile/default-avatar.png';
 import VipCard from '../../components/vip-card';
 import WeappLoginButton from '../../components/wx-login-wrapper';
 import Taro from '@tarojs/taro';
+import styles from './index.module.less';
 
 const Profile: React.FC = () => {
     const [avatar, setAvatar] = useState(DefaultAvatar);
@@ -51,17 +51,17 @@ const Profile: React.FC = () => {
     }, []);
 
     return (
-        <View style={{ padding: '20px' }}>
-            <View className='profile-header'>
-                <Image src={avatar} className='profile-avatar' />
-                <Text className='profile-name'>{name}</Text>
+        <View className={styles.wrapper}>
+            <View className={styles.profile_header}>
+                <Image src={avatar} className={styles.profile_avatar} />
+                <Text className={styles.profile_name}>{name}</Text>
             </View>
-            <View className='profile-card-info'>
-                <Text className='profile-card-info-title'>我的会员</Text>
+            <View className={styles.profile_card_info}>
+                <Text className={styles.profile_card_info_title}>我的会员</Text>
                 <VipCard cardType='年卡' remainingDays={100} expireDate='2025-01-01' />
             </View>
             {
-                !isLoggedIn && <View className='profile-footer'>
+                !isLoggedIn && <View className={styles.profile_footer}>
                     <WeappLoginButton onSuccess={handleLoginSuccess} />
                 </View>
             }
