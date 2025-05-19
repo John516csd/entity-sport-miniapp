@@ -21,9 +21,9 @@
       "node_modules/@types"
     ],
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     },
-    "baseUrl": "./"
+    "baseUrl": "."
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"],

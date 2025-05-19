@@ -2,6 +2,7 @@
     width: 100%;
     min-height: 100vh;
     box-sizing: border-box;
+    overflow-y: hidden;
 
     & > * {
         box-sizing: border-box;
@@ -9,16 +10,6 @@
 
     --card-width: 400px;
     --card-margin-right: calc(calc(100vw - var(--card-width)) / 2);
-}
-
-.header {
-    margin-bottom: 20px;
-}
-
-.title {
-    font-size: 20px;
-    font-weight: bold;
-    color: #333;
 }
 
 .cards_container {
@@ -58,7 +49,6 @@
     background-color: #fff;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    // transform: scale(0.8);
 
     &.active {
         transform: rotate(calc(calc(var(--rotate-rate)) * 1deg * var(--move-distance))) translateY(calc(var(--translate-y-rate) * 1px));
@@ -85,26 +75,27 @@
     display: block;
     font-size: 14px;
     color: #666;
+} 
+
+.confirm_btn_wrapper {
+    position: absolute;
+    bottom: 96px;
+    left: 0;
+    width: 100%;
 }
 
-.pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
-    gap: 8px;
+.confirm_btn {
+    width: 100%;
+    max-width: 400px;
+    padding: 24px;
+    background-color: #000;
+    color: #fff;
+    border-radius: 100px;
 }
 
-.dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: #ddd;
-    transition: all 0.3s ease;
-}
-
-.active_dot {
-    width: 12px;
-    height: 12px;
-    background-color: #333;
+.confirm_btn_text {
+    font-size: 32px;
+    line-height: 1.2;
+    font-weight: bold;
+    color: #fff;
 }

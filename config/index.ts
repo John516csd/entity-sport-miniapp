@@ -20,6 +20,9 @@ export default defineConfig<'vite'>(async (merge, { command, mode }) => {
     plugins: [],
     defineConstants: {
     },
+    alias: {
+      '@': '/src'
+    },
     copy: {
       patterns: [
       ],

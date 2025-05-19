@@ -15,16 +15,16 @@ const GYM_LOCATION = {
 };
 
 const CtaContainer = () => {
-    const [distance, setDistance] = useState<number | null>(null);
+    const [distance, setDistance] = useState<number | null>(0);
 
     useEffect(() => {
         // 获取用户位置
         Taro.getLocation({
             type: 'gcj02', // 使用国测局坐标系
-            success: function(res) {
+            success: function (res) {
                 const userLatitude = res.latitude;
                 const userLongitude = res.longitude;
-                
+
                 // 计算距离
                 const dist = calculateDistance(
                     userLatitude,
@@ -34,8 +34,8 @@ const CtaContainer = () => {
                 );
                 setDistance(dist);
             },
-            fail: function() {
-                setDistance(null);
+            fail: function () {
+                setDistance(0);
             }
         });
     }, []);
@@ -77,7 +77,7 @@ const CtaContainer = () => {
                 <Text className={styles.cta_item_subtitle}>GO TO GYM</Text>
                 <Text className={styles.cta_item_title}>去健身房</Text>
                 {
-                    distance && (
+                    !!distance && (
                         <Text className={styles.cta_item_distance}>
                             {`距您 ${distance}km`}
                         </Text>
@@ -89,7 +89,7 @@ const CtaContainer = () => {
                 <Text className={styles.cta_item_subtitle}>BOOK A COACH</Text>
                 <Text className={styles.cta_item_title}>预约教练</Text>
                 {
-                    distance && <Text className={`${styles.cta_item_distance} ${styles.cta_item_placeholder}`}>距您 3km</Text>
+                    !!distance && <Text className={`${styles.cta_item_distance} ${styles.cta_item_placeholder}`}>距您 3km</Text>
                 }
             </View>
         </View>
