@@ -5,6 +5,7 @@ import VipCard from '../../components/vip-card';
 import WeappLoginButton from '../../components/wx-login-wrapper';
 import Taro from '@tarojs/taro';
 import styles from './index.module.less';
+import { User, UserInfoWechat } from '@/api';
 
 const Profile: React.FC = () => {
     const [avatar, setAvatar] = useState(DefaultAvatar);
@@ -16,10 +17,9 @@ const Profile: React.FC = () => {
         try {
             const tokenRes = await Taro.getStorage({ key: 'token' });
             if (tokenRes.errMsg === 'getStorage:ok') {
-                console.log("🚀 ~ checkLoginStatus ~ tokenRes:", tokenRes)
                 setIsLoggedIn(true);
                 // 获取用户信息
-                const userInfoRes = await Taro.getStorage({ key: 'userInfo' });
+                const userInfoRes = await Taro.getStorage({ key: 'userInfoWechat' });
                 if (userInfoRes.errMsg === 'getStorage:ok') {
                     setAvatar(userInfoRes.data.avatarUrl);
                     setName(userInfoRes.data.nickName);
@@ -37,10 +37,10 @@ const Profile: React.FC = () => {
         }
     };
 
-    const handleLoginSuccess = (token: string, userInfo) => {
-        console.log('登录成功:', userInfo);
-        setAvatar(userInfo.avatarUrl);
-        setName(userInfo.nickName);
+    const handleLoginSuccess = (token: string, userInfoWechat?: UserInfoWechat, userInfo?: User) => {
+        console.log('登录成功:', userInfoWechat, userInfo);
+        setAvatar(userInfoWechat?.avatarUrl || DefaultAvatar);
+        setName(userInfoWechat?.nickName || 'xxx');
         setIsLoggedIn(true);
         Taro.setStorage({
             key: 'token',
@@ -49,6 +49,10 @@ const Profile: React.FC = () => {
         Taro.setStorage({
             key: 'userInfo',
             data: userInfo
+        });
+        Taro.setStorage({
+            key: 'userInfoWechat',
+            data: userInfoWechat
         });
     };
 

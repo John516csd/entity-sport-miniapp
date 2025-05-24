@@ -1,7 +1,7 @@
 import { View, Text, Button, ScrollView, Image } from '@tarojs/components'
 import Taro, { useLoad } from '@tarojs/taro'
 import { useState, useEffect } from 'react'
-import * as API from '../../api'
+import * as API from '@/api'
 import './index.less'
 
 export default function TestPage() {
@@ -218,15 +218,15 @@ export default function TestPage() {
 
       const response = await API.createAppointment(appointmentData)
       setResult(response)
-      
+
       Taro.showToast({
         title: '预约创建成功',
         icon: 'success'
       })
-      
+
       // 重置选择的时间段
       setSelectedTimeSlot(null)
-      
+
       // 刷新预约列表
       await handleGetMyAppointments()
     } catch (error) {
@@ -243,12 +243,12 @@ export default function TestPage() {
       setLoadingState('cancelAppointment', true)
       const response = await API.cancelAppointment(appointmentId)
       setResult(response)
-      
+
       Taro.showToast({
         title: '预约取消成功',
         icon: 'success'
       })
-      
+
       // 刷新预约列表
       await handleGetMyAppointments()
     } catch (error) {
@@ -285,7 +285,7 @@ export default function TestPage() {
   // 渲染详情内容
   const renderDetailContent = () => {
     if (!detailContent) return <Text className='no-data'>暂无详情数据</Text>
-    
+
     // 根据标题判断是什么类型的详情
     if (detailTitle.includes('会员卡详情')) {
       const membership = detailContent as API.MembershipResponse
@@ -410,14 +410,14 @@ export default function TestPage() {
           <Button onClick={handleGetCoaches} loading={loadingStates.coaches} className='test-button'>
             获取教练列表
           </Button>
-          
+
           {coaches.length > 0 && (
             <View>
               <Text className='sub-title'>教练列表 (点击选择预约教练 {selectedCoach ? `- 已选择教练ID: ${selectedCoach}` : ''})</Text>
               <ScrollView scrollX className='coach-list'>
                 {coaches.map(coach => (
-                  <View 
-                    key={coach.id} 
+                  <View
+                    key={coach.id}
                     className={`coach-item ${selectedCoach === coach.id ? 'selected' : ''}`}
                     onClick={() => handleSelectCoach(coach.id)}
                   >
@@ -426,8 +426,8 @@ export default function TestPage() {
                       <View className='selected-badge'>已选</View>
                     )}
                     <View className='coach-actions'>
-                      <Button 
-                        size='mini' 
+                      <Button
+                        size='mini'
                         onClick={(e) => {
                           e.stopPropagation()
                           handleGetCoachDetail(coach.id)
@@ -435,8 +435,8 @@ export default function TestPage() {
                       >
                         详情
                       </Button>
-                      <Button 
-                        size='mini' 
+                      <Button
+                        size='mini'
                         onClick={(e) => {
                           e.stopPropagation()
                           handleGetCoachAvailability(coach.id)
@@ -463,8 +463,8 @@ export default function TestPage() {
               <Text className='sub-title'>会员卡列表 (点击选择用于预约的会员卡 {selectedMembership ? `- 已选择会员卡ID: ${selectedMembership}` : ''})</Text>
               <ScrollView scrollY className='membership-list-vertical'>
                 {memberships.map(membership => (
-                  <View 
-                    key={membership.id} 
+                  <View
+                    key={membership.id}
                     className={`membership-item-vertical ${selectedMembership === membership.id ? 'selected' : ''}`}
                     onClick={() => setSelectedMembership(membership.id)}
                   >
@@ -473,8 +473,8 @@ export default function TestPage() {
                       {selectedMembership === membership.id && (
                         <View className='selected-badge'>已选</View>
                       )}
-                      <Button 
-                        size='mini' 
+                      <Button
+                        size='mini'
                         className='detail-button'
                         onClick={(e) => {
                           e.stopPropagation()
@@ -537,21 +537,21 @@ export default function TestPage() {
               <View className='selection-item'>
                 <Text className='selection-label'>时间段:</Text>
                 <Text className={`selection-value ${selectedTimeSlot ? 'selected-value' : 'missing-value'}`}>
-                  {selectedTimeSlot 
+                  {selectedTimeSlot
                     ? `已选择: ${new Date(selectedTimeSlot.start).toLocaleTimeString()} - ${new Date(selectedTimeSlot.end).toLocaleTimeString()}`
                     : '未选择 (请点击下方时间段或获取教练可用时间)'}
                 </Text>
               </View>
             </View>
-            
+
             {/* 可用时间段选择 */}
             {selectedCoach && timeSlots.length > 0 && (
               <View className='time-slots-selection'>
                 <Text className='sub-title'>请选择时间段:</Text>
                 <ScrollView scrollY className='time-slots-scroll'>
                   {timeSlots.map((slot, index) => (
-                    <View 
-                      key={index} 
+                    <View
+                      key={index}
                       className={`time-slot-selectable ${selectedTimeSlot && selectedTimeSlot.start === slot.start ? 'selected' : ''}`}
                       onClick={() => setSelectedTimeSlot(slot)}
                     >
@@ -566,17 +566,17 @@ export default function TestPage() {
                 </ScrollView>
               </View>
             )}
-            
+
             {selectedCoach && timeSlots.length === 0 && (
               <View className='no-time-slots'>
                 <Text className='warning-text'>教练当天没有可用时间，请点击教练卡片上的"可用时间"按钮查看</Text>
               </View>
             )}
-            
+
             <View className='action-row'>
-              <Button 
-                onClick={handleCreateAppointment} 
-                loading={loadingStates.createAppointment} 
+              <Button
+                onClick={handleCreateAppointment}
+                loading={loadingStates.createAppointment}
                 className={`test-button ${(!selectedCoach || !selectedMembership || !selectedTimeSlot) ? 'disabled-button' : ''}`}
                 disabled={!selectedCoach || !selectedMembership || !selectedTimeSlot}
               >
@@ -587,7 +587,7 @@ export default function TestPage() {
               </Button>
             </View>
           </View>
-          
+
           {appointments.length > 0 ? (
             <View className='appointments-list'>
               {appointments.map(appointment => (
@@ -600,8 +600,8 @@ export default function TestPage() {
                     <Text className='appointment-status'>状态: {appointment.status}</Text>
                   </View>
                   {appointment.status === 'scheduled' && (
-                    <Button 
-                      size='mini' 
+                    <Button
+                      size='mini'
                       className='cancel-button'
                       onClick={() => handleCancelAppointment(appointment.id)}
                     >

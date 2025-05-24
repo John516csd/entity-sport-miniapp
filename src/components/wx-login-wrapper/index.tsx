@@ -3,13 +3,11 @@ import { Button } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import { useState } from "react";
 import "./index.less";
-import { BASE_API_URL } from "../../constants";
-import { http } from "../../utils/request";
-import { login } from "../../api";
+import { login, User, UserInfoWechat } from "@/api";
 
 interface WeappLoginButtonProps {
   className?: string;
-  onSuccess?: (token: string, userInfo) => void;
+  onSuccess?: (token: string, userInfoWechat?: UserInfoWechat, userInfo?: User) => void;
 }
 
 function WeappLoginButton(props: WeappLoginButtonProps) {
@@ -17,7 +15,7 @@ function WeappLoginButton(props: WeappLoginButtonProps) {
   const [isLogin, setIsLogin] = useState(false);
 
   // 处理获取用户信息
-  const handleGetUserInfo = async () => {
+  const handleGetUserInfo = async (): Promise<UserInfoWechat | undefined> => {
     try {
       const modalRes = await Taro.showModal({
         title: "授权提示",
@@ -33,7 +31,7 @@ function WeappLoginButton(props: WeappLoginButtonProps) {
         console.log("🚀 ~ handleGetUserInfo ~ profileRes:", profileRes);
 
         const { userInfo } = profileRes;
-        return userInfo;
+        return userInfo as UserInfoWechat;
       } else {
         Taro.showToast({
           title: "您已取消授权",
@@ -58,7 +56,7 @@ function WeappLoginButton(props: WeappLoginButtonProps) {
         throw new Error(e.detail.errMsg);
       }
 
-      const userInfo = await handleGetUserInfo();
+      const userInfoWechat = await handleGetUserInfo();
 
       // 获取登录code
       const loginResult = await Taro.login();
@@ -78,8 +76,8 @@ function WeappLoginButton(props: WeappLoginButtonProps) {
       const res = await login(code);
       console.log("🚀 ~ handleGetPhoneNumber ~ res:", res);
 
-      const { access_token } = res;
-      
+      const { access_token, user } = res;
+
       // 确保存储token正确
       if (access_token) {
         try {
@@ -92,8 +90,8 @@ function WeappLoginButton(props: WeappLoginButtonProps) {
       } else {
         console.error('No access_token in response:', res);
       }
-      
-      onSuccess && onSuccess(access_token, userInfo);
+
+      onSuccess && onSuccess(access_token, userInfoWechat, user);
 
       Taro.showToast({
         title: "登录成功",

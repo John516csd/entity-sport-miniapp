@@ -6,9 +6,9 @@ import DateSelectorDrawer, {
     DateItem,
 } from "../../modules/appointment/date-selector-drawer";
 import { TimeSlot } from "@/utils";
-import { getCoaches, Coach } from "@/api";
 import { BASE_API_URL } from "@/constants";
 import Taro from "@tarojs/taro";
+import { Coach, getCoaches } from "@/api";
 
 const Appointment: React.FC = () => {
     const [selectedCoach, setSelectedCoach] = useState<Coach | null>(null);
