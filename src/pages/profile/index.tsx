@@ -9,7 +9,33 @@ import styles from './index.module.less';
 const Profile: React.FC = () => {
     const [avatar, setAvatar] = useState(DefaultAvatar);
     const [name, setName] = useState('xxx');
-    const [isLoggedIn, setIsLoggedIn] = useState(true);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    // 检查登录状态
+    const checkLoginStatus = async () => {
+        try {
+            const tokenRes = await Taro.getStorage({ key: 'token' });
+            if (tokenRes.errMsg === 'getStorage:ok') {
+                console.log("🚀 ~ checkLoginStatus ~ tokenRes:", tokenRes)
+                setIsLoggedIn(true);
+                // 获取用户信息
+                const userInfoRes = await Taro.getStorage({ key: 'userInfo' });
+                if (userInfoRes.errMsg === 'getStorage:ok') {
+                    setAvatar(userInfoRes.data.avatarUrl);
+                    setName(userInfoRes.data.nickName);
+                }
+            } else {
+                setIsLoggedIn(false);
+                setAvatar(DefaultAvatar);
+                setName('xxx');
+            }
+        } catch (err) {
+            console.error('检查登录状态失败:', err);
+            setIsLoggedIn(false);
+            setAvatar(DefaultAvatar);
+            setName('xxx');
+        }
+    };
 
     const handleLoginSuccess = (token: string, userInfo) => {
         console.log('登录成功:', userInfo);
@@ -26,29 +52,10 @@ const Profile: React.FC = () => {
         });
     };
 
-    useEffect(() => {
-        Taro.getStorage({ key: 'token' }).then((res) => {
-            console.log('token:', res);
-            if (res.errMsg === 'getStorage:ok') {
-                setIsLoggedIn(true);
-            } else {
-                setIsLoggedIn(false);
-            }
-        }).catch((err) => {
-            setIsLoggedIn(false);
-            console.log('getStorage error:', err);
-        });
-        Taro.getStorage({ key: 'userInfo' }).then((res) => {
-            console.log('userInfo:', res);
-            if (res.errMsg === 'getStorage:ok') {
-                setAvatar(res.data.avatarUrl);
-                setName(res.data.nickName);
-            }
-        }).catch((err) => {
-            setIsLoggedIn(false);
-            console.log('getStorage error:', err);
-        });
-    }, []);
+    // 页面显示时检查登录状态
+    Taro.useDidShow(() => {
+        checkLoginStatus();
+    });
 
     return (
         <View className={styles.wrapper}>
@@ -56,10 +63,12 @@ const Profile: React.FC = () => {
                 <Image src={avatar} className={styles.profile_avatar} />
                 <Text className={styles.profile_name}>{name}</Text>
             </View>
-            <View className={styles.profile_card_info}>
-                <Text className={styles.profile_card_info_title}>我的会员</Text>
-                <VipCard cardType='年卡' remainingDays={100} expireDate='2025-01-01' />
-            </View>
+            {isLoggedIn && (
+                <View className={styles.profile_card_info}>
+                    <Text className={styles.profile_card_info_title}>我的会员</Text>
+                    <VipCard cardType='年卡' remainingDays={100} expireDate='2025-01-01' />
+                </View>
+            )}
             {
                 !isLoggedIn && <View className={styles.profile_footer}>
                     <WeappLoginButton onSuccess={handleLoginSuccess} />

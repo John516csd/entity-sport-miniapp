@@ -8,7 +8,8 @@
         box-sizing: border-box;
     }
 
-    --card-width: 400px;
+    --card-width: 500px;
+    --card-height: 600px;
     --card-margin-right: calc(calc(100vw - var(--card-width)) / 2);
 }
 
@@ -42,13 +43,13 @@
 .card {
     box-sizing: border-box;
     display: inline-block;
-    width: 400px;
+    width: var(--card-width);
+    height: var(--card-height);
     flex-shrink: 0;
-    height: 500px;
-    padding: 16px;
+    padding: 24px;
     background-color: #fff;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 32px;
+    box-shadow: 0 2px 20px rgba(65, 65, 65, 0.1);
 
     &.active {
         transform: rotate(calc(calc(var(--rotate-rate)) * 1deg * var(--move-distance))) translateY(calc(var(--translate-y-rate) * 1px));
@@ -65,7 +66,7 @@
 
 .card_title {
     display: block;
-    font-size: 18px;
+    font-size: 36px;
     font-weight: bold;
     color: #333;
     margin-bottom: 8px;
@@ -73,7 +74,7 @@
 
 .card_content {
     display: block;
-    font-size: 14px;
+    font-size: 24px;
     color: #666;
 } 
 
@@ -98,4 +99,18 @@
     line-height: 1.2;
     font-weight: bold;
     color: #fff;
+}
+
+.card_avatar {
+    width: 100%;
+    aspect-ratio: 1346 / 1324;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 16px;
+
+    & > image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 }

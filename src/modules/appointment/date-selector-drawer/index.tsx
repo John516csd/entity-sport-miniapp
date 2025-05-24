@@ -4,6 +4,7 @@ import { ITouchEvent } from '@tarojs/components/types/common';
 import styles from './index.module.less';
 import { generateNextDays, generateTimeSlots, TimeSlot } from '@/utils/index';
 import { WEEK_DAYS } from '@/constants';
+import { Coach } from '@/api';
 
 export interface DateItem {
     year: number;
@@ -14,12 +15,13 @@ export interface DateItem {
 }
 
 interface DateSelectorDrawerProps {
+    selectedCoach: Coach | null;
     visible: boolean;
     onClose: () => void;
     onConfirm: (date: DateItem, timeSlot: TimeSlot) => void;
 }
 
-const DateSelectorDrawer = ({ visible, onClose, onConfirm }: DateSelectorDrawerProps) => {
+const DateSelectorDrawer = ({ selectedCoach, visible, onClose, onConfirm }: DateSelectorDrawerProps) => {
     /**
      * 获取14天后的日期
      */

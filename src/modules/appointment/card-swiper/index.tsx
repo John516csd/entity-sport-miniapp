@@ -1,4 +1,4 @@
-import { View, Button } from '@tarojs/components';
+import { View, Button, Image } from '@tarojs/components';
 import { CSSProperties, useRef, useState } from 'react';
 import styles from './index.module.less';
 
@@ -6,6 +6,7 @@ export interface CardItem {
     id: number | string;
     title: string;
     content: string;
+    avatar: string;
 }
 
 interface CardSwiperProps {
@@ -95,6 +96,9 @@ const CardSwiper = ({ cards, onCardChange, onConfirm }: CardSwiperProps) => {
                             <View className={`${styles.card} ${activeIndex === index ? styles.active : ''}
                                 ${index > activeIndex ? styles.right : ''}
                                 ${index < activeIndex ? styles.left : ''}`} key={card.id}>
+                                <View className={styles.card_avatar}>
+                                    <Image src={card.avatar} />
+                                </View>
                                 <View className={styles.card_title}>{card.title}</View>
                                 <View className={styles.card_content}>{card.content}</View>
                             </View>
