@@ -333,16 +333,16 @@ export default function TestPage() {
             <Text className='detail-label'>姓名:</Text>
             <Text className='detail-value'>{coach.name}</Text>
           </View>
-          {coach.introduction && (
+          {coach.specialty && (
             <View className='detail-item'>
               <Text className='detail-label'>简介:</Text>
-              <Text className='detail-value'>{coach.introduction}</Text>
+              <Text className='detail-value'>{coach.specialty}</Text>
             </View>
           )}
-          {coach.specialization && (
+          {coach.specialty && (
             <View className='detail-item'>
               <Text className='detail-label'>专长:</Text>
-              <Text className='detail-value'>{coach.specialization}</Text>
+              <Text className='detail-value'>{coach.specialty}</Text>
             </View>
           )}
           {coach.avatar_url && (

@@ -53,9 +53,9 @@ export interface UserInfoWechat {
 export interface Coach {
     id: number;              // 教练ID
     name: string;            // 教练名称
-    avatar_url?: string;     // 头像URL
-    introduction?: string;   // 介绍
-    specialization?: string; // 专长
+    avatar_url: string;      // 头像URL
+    phone: string;           // 手机号码
+    specialty: string;       // 专长
 }
 
 /**
@@ -142,19 +142,43 @@ export interface AppointmentCreate {
  */
 export interface Appointment {
     id: number;              // 预约ID
-    user_id: string;         // 用户ID
-    coach_id: number;        // 教练ID
+    uid: string;            // 用户ID
+    coach_id: number;       // 教练ID
+    membership_id: number;  // 会员卡ID
     appointment_start: string; // 预约开始时间
-    appointment_end: string; // 预约结束时间
-    status: string;          // 状态
-    created_at: string;      // 创建时间
+    appointment_end: string;   // 预约结束时间
+    status: string;         // 状态
+    cancellation_note?: string; // 取消原因
+}
+
+/**
+ * 会员卡类型接口
+ */
+export interface MembershipType {
+    id: number;
+    name: string;
+    total_sessions: number;
+    validity_days: number;
+    max_leave_count: number;
+    max_leave_duration: number;
+}
+
+/**
+ * 会员卡详细信息响应接口
+ */
+export interface MembershipResponseWithDetails extends Membership {
+    user: User;
+    type: MembershipType;
+    leaves: any[];     // 请假记录
 }
 
 /**
  * 预约信息响应接口
  */
 export interface AppointmentResponse extends Appointment {
-    coach: Coach;            // 教练信息
+    user: User;            // 用户信息
+    coach: Coach;          // 教练信息
+    membership: MembershipResponseWithDetails;
 }
 
 /**

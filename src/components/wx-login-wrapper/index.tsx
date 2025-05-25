@@ -65,15 +65,13 @@ function WeappLoginButton(props: WeappLoginButtonProps) {
       }
 
       const { code } = loginResult;
-      const encryptedData = e?.detail?.encryptedData;
-      const iv = e?.detail?.iv;
 
       // 打印调试信息
       console.log("🚀 ~ onGetUserInfo ~ code:", code);
       console.log("🚀 ~ onGetPhoneNumber ~ detail:", e?.detail);
 
       // 使用封装的请求方法
-      const res = await login(code);
+      const res = await login({ code, user_info: userInfoWechat as UserInfoWechat });
       console.log("🚀 ~ handleGetPhoneNumber ~ res:", res);
 
       const { access_token, user } = res;

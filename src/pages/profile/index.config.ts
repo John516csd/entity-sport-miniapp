@@ -1,4 +1,4 @@
 export default {
     navigationBarTitleText: '我的',
-    disableScroll: true
+    // disableScroll: true
 } 

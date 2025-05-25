@@ -5,16 +5,18 @@ import styles from "./index.module.less";
 import DateSelectorDrawer, {
     DateItem,
 } from "../../modules/appointment/date-selector-drawer";
-import { TimeSlot } from "@/utils";
+import { TimeSlot as UTimeSlot } from "@/utils";
 import { BASE_API_URL } from "@/constants";
 import Taro from "@tarojs/taro";
-import { Coach, getCoaches } from "@/api";
+import { Coach, getCoaches, createAppointment, TimeSlot } from "@/api";
+import { useMembershipStore } from "@/store/membership";
 
 const Appointment: React.FC = () => {
     const [selectedCoach, setSelectedCoach] = useState<Coach | null>(null);
     const [dateSelectorVisible, setDateSelectorVisible] = useState<boolean>(false);
     const [coaches, setCoaches] = useState<Coach[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
+    const { selectedMembership, fetchMemberships } = useMembershipStore.getState();
 
     // 获取教练列表
     const handleGetCoaches = async () => {
@@ -24,13 +26,19 @@ const Appointment: React.FC = () => {
             setCoaches(response);
         } catch (error) {
             console.error('获取教练列表失败', error);
+            Taro.showToast({
+                title: '获取教练列表失败',
+                icon: 'none'
+            });
         } finally {
             setLoading(false);
         }
     };
 
-    // 组件加载时获取教练列表
+    // 组件加载时获取数据
     Taro.useDidShow(() => {
+        console.log("🚀 ~ Taro.useDidShow ~ useDidShow:")
+        fetchMemberships();
         handleGetCoaches();
     });
 
@@ -38,7 +46,7 @@ const Appointment: React.FC = () => {
     const cards = coaches.map(coach => ({
         id: coach.id,
         title: coach.name,
-        content: coach.introduction || coach.specialization || '暂无介绍',
+        content: coach.specialty || '暂无介绍',
         avatar: `${BASE_API_URL}${coach.avatar_url}`
     }));
 
@@ -56,8 +64,37 @@ const Appointment: React.FC = () => {
         }
     };
 
-    const handleConfirmDate = (date: DateItem, timeSlot: TimeSlot) => {
-        console.log("确定", date, timeSlot);
+    const handleConfirmDate = async (date: DateItem, timeSlot: TimeSlot) => {
+        console.log("🚀 ~ handleConfirmDate ~ timeSlot:", date, timeSlot, selectedCoach, selectedMembership)
+        if (!selectedCoach || !selectedMembership) {
+            return;
+        }
+
+        try {
+            // 创建预约
+            const response = await createAppointment({
+                coach_id: selectedCoach.id,
+                appointment_start: timeSlot.start,
+                membership_id: selectedMembership.id
+            });
+            console.log("🚀 ~ handleConfirmDate ~ response:", response);
+
+            Taro.showToast({
+                title: '预约成功',
+                icon: 'success',
+                duration: 3000
+            });
+
+            // 关闭日期选择器
+            setDateSelectorVisible(false);
+        } catch (error) {
+            console.error('预约失败', error);
+            Taro.showToast({
+                title: error.message,
+                icon: 'none',
+                duration: 2000
+            });
+        }
     };
 
     return (

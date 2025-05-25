@@ -1,10 +1,12 @@
-import { ScrollView, View } from '@tarojs/components';
-import React, { useMemo, useRef, useState } from 'react';
+import { View } from '@tarojs/components';
+import React, { useMemo, useRef, useState, useEffect } from 'react';
 import { ITouchEvent } from '@tarojs/components/types/common';
 import styles from './index.module.less';
-import { generateNextDays, generateTimeSlots, TimeSlot } from '@/utils/index';
+import { generateNextDays } from '@/utils/index';
 import { WEEK_DAYS } from '@/constants';
-import { Coach } from '@/api';
+import { Coach, getCoachAvailability, TimeSlot } from '@/api';
+import Taro from '@tarojs/taro';
+import { localizeDate } from '@/utils/date';
 
 export interface DateItem {
     year: number;
@@ -37,13 +39,11 @@ const DateSelectorDrawer = ({ selectedCoach, visible, onClose, onConfirm }: Date
             };
         });
     }, []);
-    const timeSlots = useMemo<TimeSlot[]>(() => {
-        return generateTimeSlots(9, 22, 30, 60);
-    }, []);
-    console.log("🚀 ~ DateSelectorDrawer ~ timeSlots:", timeSlots)
 
     const [currentSelectedDate, setCurrentSelectedDate] = useState<DateItem>(next14Days[0]);
     const [currentSelectedTimeSlot, setCurrentSelectedTimeSlot] = useState<TimeSlot>();
+    const [availableTimeSlots, setAvailableTimeSlots] = useState<TimeSlot[]>([]);
+    const [loading, setLoading] = useState(false);
 
     const wrapperRef = useRef<HTMLDivElement>(null);
     const [touchStartY, setTouchStartY] = useState<number>(0);
@@ -54,6 +54,34 @@ const DateSelectorDrawer = ({ selectedCoach, visible, onClose, onConfirm }: Date
     const isConfirmButtonDisabled = useMemo<boolean>(() => {
         return !currentSelectedDate || !currentSelectedTimeSlot;
     }, [currentSelectedDate, currentSelectedTimeSlot]);
+
+    // 当选中日期或教练改变时，获取可用时间段
+    useEffect(() => {
+        const fetchAvailableTimeSlots = async () => {
+            if (!selectedCoach || !currentSelectedDate || !visible) return;
+
+            try {
+                setLoading(true);
+                const date = new Date(currentSelectedDate.date);
+                const timeSlots = await getCoachAvailability(selectedCoach.id, date.toISOString().split('T')[0]);
+                setAvailableTimeSlots(timeSlots);
+                // 如果当前选中的时间段不在可用时间段中，清除选择
+                if (currentSelectedTimeSlot && !timeSlots.some(slot => slot.start === currentSelectedTimeSlot.start)) {
+                    setCurrentSelectedTimeSlot(undefined);
+                }
+            } catch (error) {
+                console.log("🚀 ~ fetchAvailableTimeSlots ~ error:", error)
+                Taro.showToast({
+                    title: '获取可用时间段失败',
+                    icon: 'none'
+                });
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchAvailableTimeSlots();
+    }, [selectedCoach, currentSelectedDate, visible]);
 
     const handleTouchStart = (e: ITouchEvent) => {
         const target = e.target as HTMLDivElement;
@@ -90,7 +118,6 @@ const DateSelectorDrawer = ({ selectedCoach, visible, onClose, onConfirm }: Date
     };
 
     const handleDateItemClick = (date: DateItem) => {
-        console.log("🚀 ~ handleDateItemClick ~ date:", date)
         setCurrentSelectedDate(date);
     };
 
@@ -144,17 +171,27 @@ const DateSelectorDrawer = ({ selectedCoach, visible, onClose, onConfirm }: Date
                     </View>
                     {/* 时间选择 */}
                     <View className={styles.time_selector_wrapper} data-dom="date_selector">
-                        <View className={styles.time_selector_list}>
-                            {
-                                timeSlots.map((timeSlot) => (
-                                    <View key={timeSlot.startTime}
-                                        className={`${styles.time_selector_item} ${currentSelectedTimeSlot?.startTime === timeSlot.startTime ? styles.selected : ''}`}
-                                        onClick={() => handleTimeSlotClick(timeSlot)}>
-                                        <View className={styles.time_selector_item_time}>{timeSlot.timeDurationString}</View>
-                                    </View>
-                                ))
-                            }
-                        </View>
+                        {loading ? (
+                            <View className={styles.loading}>加载中...</View>
+                        ) : availableTimeSlots.length === 0 ? (
+                            <View className={styles.empty}>暂无可用时间段</View>
+                        ) : (
+                            <View className={styles.time_selector_list}>
+                                {
+                                    availableTimeSlots.map((timeSlot) => {
+                                        const startTime = localizeDate(timeSlot.start, 'HH:mm');
+                                        const endTime = localizeDate(timeSlot.end, 'HH:mm');
+                                        return (
+                                            <View key={timeSlot.start}
+                                                className={`${styles.time_selector_item} ${currentSelectedTimeSlot?.start === timeSlot.start ? styles.selected : ''}`}
+                                                onClick={() => handleTimeSlotClick(timeSlot)}>
+                                                <View className={styles.time_selector_item_time}>{`${startTime}-${endTime}`}</View>
+                                            </View>
+                                        )
+                                    })
+                                }
+                            </View>
+                        )}
                     </View>
                     {/* 确认按钮 */}
                     <View className={styles.confirm_button_wrapper}>
