@@ -1,7 +1,8 @@
 import { View, Text } from '@tarojs/components';
 import './index.less';
+import { CardType, CardTypeName } from '@/types';
 
-const VipCard = ({ cardType, remainingDays, expireDate }) => {
+const VipCard = ({ cardType, remainingDays, expireDate }: { cardType: CardType, remainingDays: number, expireDate: string }) => {
     return (
         <View className='vip-card'>
             {/* 头部 */}
@@ -18,7 +19,7 @@ const VipCard = ({ cardType, remainingDays, expireDate }) => {
             </View>
             {/* 类型 */}
             <View className='vip-card-type'>
-                <Text className='vip-card-type-text'>{cardType}</Text>
+                <Text className='vip-card-type-text'>{CardTypeName[cardType]}</Text>
             </View>
             {/* 背景 */}
             <View className='vip-card-bg'>

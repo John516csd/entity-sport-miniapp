@@ -2,6 +2,8 @@
  * 用户相关类型定义
  */
 
+import { CardType } from "@/types";
+
 /**
  * 用户信息接口
  */
@@ -77,7 +79,7 @@ export interface TimeSlot {
 export interface Membership {
     id: number;              // 会员ID
     uid: string;             // 用户ID
-    type_id: number;         // 会员类型ID
+    type_id: CardType;         // 会员类型ID
     purchased_at: string;    // 购买时间
     expired_at: string;      // 过期时间
     status: string;          // 状态
