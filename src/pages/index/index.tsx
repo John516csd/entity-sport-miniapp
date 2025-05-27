@@ -19,9 +19,9 @@ export default function Index() {
       <HomeHeroBanner />
       {/* CTA */}
       <CtaContainer />
-      
+
       {/* 测试页面按钮 */}
-      <View style={{ padding: '20px', position: 'fixed', bottom: '80px', right: '20px' }}>
+      {/* <View style={{ padding: '20px', position: 'fixed', bottom: '80px', right: '20px' }}>
         <Button 
           onClick={goToTestPage}
           style={{ 
@@ -39,7 +39,7 @@ export default function Index() {
         >
           测试
         </Button>
-      </View>
+      </View> */}
     </View>
   )
 }

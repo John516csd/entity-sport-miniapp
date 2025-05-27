@@ -24,9 +24,7 @@ const store = createStore<UserState>((set) => ({
     name: 'xxx',
     setUser: (user) => set({ user }),
     setUserInfoWechat: (userInfoWechat) => set({ userInfoWechat }),
-    login: async (token, userInfoWechat, user) => {
-        console.log("🚀 ~ login ~ token:", token, userInfoWechat, user)
-        // 保存 token 到 storage
+    login: async (token, userInfoWechat, user) => {        // 保存 token 到 storage
         await Taro.setStorage({
             key: 'token',
             data: token
@@ -73,7 +71,6 @@ const store = createStore<UserState>((set) => ({
     checkLoginStatus: async () => {
         try {
             const tokenRes = await Taro.getStorage({ key: 'token' });
-            console.log("🚀 ~ checkLoginStatus: ~ tokenRes:", tokenRes)
             if (tokenRes.errMsg === 'getStorage:ok') {
                 // 获取用户信息
                 let userInfo: User | null = null;

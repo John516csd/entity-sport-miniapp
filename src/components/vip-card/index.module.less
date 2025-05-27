@@ -1,6 +1,7 @@
 @import "../../styles/kingo-fonts.less";
 
-.vip-card {
+.vip_card {
+    width: 100%;
     background-color: #1a1a1a;
     color: #fff;
     padding: 24px;
@@ -8,15 +9,16 @@
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
     position: relative;
     overflow: hidden;
-    height: 350px;
+    height: 380px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     z-index: 1;
     overflow: hidden;
+    box-sizing: border-box;
 }
 
-.vip-card-bg {
+.vip_card_bg {
     position: absolute;
     top: 40%;
     left: 50%;
@@ -26,34 +28,34 @@
 }
 
 /* Background logo watermark */
-.circle-1 {
+.circle_1 {
     width: 800px;
     height: 800px;
     background: rgba(0, 0, 0, 0.6);
     border-radius: 100%;
 }
 
-.circle-2 {
+.circle_2 {
     width: 800px;
     height: 800px;
     background: rgba(0, 0, 0, 0.6);
     border-radius: 100%;
 }
 
-.vip-card-header {
+.vip_card_header {
     display: flex;
     align-items: center;
     margin-bottom: 30px;
 }
 
-.vip-logo-expire-date-wrapper {
+.vip_logo_expire_date_wrapper {
     display: flex;
     align-items: flex-start;
     flex-direction: column;
     gap: 4px;
 }
 
-.logo-letter {
+.logo_letter {
     color: #bf89f5;
     font-style: italic;
     font-size: 2em;
@@ -62,24 +64,24 @@
     font-family: "Kingo";
 }
 
-.expire-date {
+.expire_date {
     color: #ccc;
     font-size: 24px;
 }
 
-.vip-card-footer {
+.vip_card_footer {
     display: flex;
     align-items: flex-start;
     flex-direction: column;
     gap: 4px;
 }
 
-.vip-card-remaining-text {
+.vip_card_remaining_text {
     color: #ccc;
     font-size: 24px;
 }
 
-.vip-card-remaining-days {
+.vip_card_remaining_days {
     color: #bf89f5;
     font-size: 2.5em;
     font-weight: 900;
@@ -87,7 +89,7 @@
     font-family: "Kingo";
 }
 
-.vip-card-type {
+.vip_card_type {
     position: absolute;
     top: 36px;
     right: 0;
@@ -100,7 +102,7 @@
     justify-content: center;
 }
 
-.vip-card-type-text {
+.vip_card_type_text {
     color: #fff;
     font-size: 24px;
     line-height: 100%;

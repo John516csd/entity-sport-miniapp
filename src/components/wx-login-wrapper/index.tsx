@@ -113,7 +113,7 @@ function WeappLoginButton(props: WeappLoginButtonProps) {
       loading={isLogin}
       className={`login-button`}
     >
-      微信一键登录
+      手机号快捷登录
     </Button>
   );
 }

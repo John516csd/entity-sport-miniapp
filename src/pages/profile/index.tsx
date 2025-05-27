@@ -11,6 +11,8 @@ import { useMembershipStore } from '@/store/membership';
 import { useAppointmentStore } from '@/store/appointment';
 import { useStore } from '@/hooks/useStore';
 import { localizeDate } from '@/utils/date';
+import MenuItemWrapper from '@/components/menu-item-wrapper';
+import { CardTypeName } from '@/types';
 
 const Profile: React.FC = () => {
     const { login, checkLoginStatus, getState, logout } = useUserStore;
@@ -76,6 +78,21 @@ const Profile: React.FC = () => {
     const handleLogout = async () => {
         try {
             await logout();
+            
+            // 清除预约和会员数据
+            useAppointmentStore.setState({
+                appointments: [],
+                loading: false,
+                error: null
+            });
+            
+            useMembershipStore.setState({
+                memberships: [],
+                selectedMembership: null,
+                loading: false,
+                error: null
+            });
+            
             Taro.showToast({
                 title: '退出成功',
                 icon: 'success'
@@ -94,30 +111,32 @@ const Profile: React.FC = () => {
                 <Image src={userState.avatar} className={styles.profile_avatar} />
                 <Text className={styles.profile_name}>{userState.name}</Text>
             </View>
-            {getState().isLoggedIn && (
-                <>
+            {(
+                <View className={styles.profile_content}>
                     {/* 会员卡信息 */}
-                    {
-                        selectedMembership && (
-                            <View className={styles.profile_card_info}>
-                                <Text className={styles.profile_card_info_title}>我的会员</Text>
-                                <VipCard cardType={selectedMembership.type_id} remainingDays={selectedMembership.remaining_sessions} expireDate={localizeDate(selectedMembership.expired_at || '')} />
-                            </View>
-                        )
-                    }
+                    <MenuItemWrapper label='我的会员'>
+                        <VipCard
+                            cardName={selectedMembership?.type_id ? CardTypeName[selectedMembership.type_id] : '暂无'}
+                            remainingDays={selectedMembership?.remaining_sessions || 0}
+                            expireDate={selectedMembership?.expired_at ? localizeDate(selectedMembership?.expired_at) : 'xxxx-xx-xx'}
+                        />
+                    </MenuItemWrapper>
                     {/* 预约历史 */}
-                    <AppointmentHistory
-                        appointments={appointmentState.appointments}
-                        loading={appointmentState.loading}
-                        onAppointmentClick={handleAppointmentClick}
-                        onCancelAppointment={handleCancelAppointment}
-                        className={styles.appointment_history}
-                    />
+                    <MenuItemWrapper label='预约记录'>
+                        <AppointmentHistory
+                            appointments={appointmentState.appointments}
+                            loading={appointmentState.loading}
+                            onAppointmentClick={handleAppointmentClick}
+                            onCancelAppointment={handleCancelAppointment}
+                            className={styles.appointment_history}
+                        /></MenuItemWrapper>
                     {/* 退出登录 */}
-                    <View className={styles.profile_logout}>
-                        <Button className={styles.profile_logout_button} onClick={handleLogout}>退出登录</Button>
-                    </View>
-                </>
+                    {
+                        getState().isLoggedIn && <View className={styles.profile_logout}>
+                            <Button className={styles.profile_logout_button} onClick={handleLogout}>退出登录</Button>
+                        </View>
+                    }
+                </View>
             )}
             {
                 !getState().isLoggedIn && <View className={styles.profile_footer}>

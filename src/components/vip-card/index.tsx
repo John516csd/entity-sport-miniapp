@@ -1,30 +1,29 @@
 import { View, Text } from '@tarojs/components';
-import './index.less';
-import { CardType, CardTypeName } from '@/types';
+import styles from './index.module.less';
 
-const VipCard = ({ cardType, remainingDays, expireDate }: { cardType: CardType, remainingDays: number, expireDate: string }) => {
+const VipCard = ({ cardName, remainingDays, expireDate }: { cardName: string, remainingDays: number, expireDate: string }) => {
     return (
-        <View className='vip-card'>
+        <View className={styles.vip_card}>
             {/* 头部 */}
-            <View className='vip-card-header'>
-                <View className='vip-logo-expire-date-wrapper'>
-                    <Text className='logo-letter'>Entity VIP</Text>
-                    <Text className='expire-date'>{expireDate} 过期</Text>
+            <View className={styles.vip_card_header}>
+                <View className={styles.vip_logo_expire_date_wrapper}>
+                    <Text className={styles.logo_letter}>Entity VIP</Text>
+                    <Text className={styles.expire_date}>{expireDate} 过期</Text>
                 </View>
             </View>
             {/* 底部 */}
-            <View className='vip-card-footer'>
-                <Text className='vip-card-remaining-text'>剩余</Text>
-                <Text className='vip-card-remaining-days'>{remainingDays}</Text>
+            <View className={styles.vip_card_footer}>
+                <Text className={styles.vip_card_remaining_text}>剩余</Text>
+                <Text className={styles.vip_card_remaining_days}>{remainingDays}</Text>
             </View>
             {/* 类型 */}
-            <View className='vip-card-type'>
-                <Text className='vip-card-type-text'>{CardTypeName[cardType]}</Text>
+            <View className={styles.vip_card_type}>
+                <Text className={styles.vip_card_type_text}>{cardName}</Text>
             </View>
             {/* 背景 */}
-            <View className='vip-card-bg'>
-                <View className='circle-1'></View>
-                <View className='circle-2'></View>
+            <View className={styles.vip_card_bg}>
+                <View className={styles.circle_1}></View>
+                <View className={styles.circle_2}></View>
             </View>
         </View>
     );

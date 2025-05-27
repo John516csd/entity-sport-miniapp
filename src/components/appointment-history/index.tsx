@@ -64,7 +64,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
         </View>
         {/* 取消按钮 */}
         {
-            canShowCancel && <View className={`${styles.frostedCancel} ${showCancel ? styles.show : styles.hide}`} onClick={handleCancelClick}>
+            <View className={`${styles.frostedCancel} ${showCancel ? styles.show : styles.hide}`} onClick={handleCancelClick}>
                 <Text>取消</Text>
             </View>
         }
@@ -104,7 +104,6 @@ const AppointmentHistory: React.FC<AppointmentHistoryProps> = ({
 
     return (
         <View className={`${styles.container} ${className}`}>
-            <Text className={styles.title}>历史预约</Text>
             <View className={styles.list}>
                 {appointments.map((appointment) => (
                     <AppointmentCard
