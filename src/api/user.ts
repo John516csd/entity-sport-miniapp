@@ -9,7 +9,7 @@ import { User, UserUpdate, Membership } from "./types";
  * @returns 用户信息
  */
 export const getCurrentUser = () => {
-    return http.get<User>("/api/v1/users/users/me");
+    return http.get<User>("/api/v1/users/me");
 };
 
 /**
@@ -18,7 +18,7 @@ export const getCurrentUser = () => {
  * @returns 更新后的用户信息
  */
 export const updateCurrentUser = (userData: UserUpdate) => {
-    return http.put<User>("/api/v1/users/users/me", userData);
+    return http.put<User>("/api/v1/users/me", userData);
 };
 
 /**
@@ -26,7 +26,7 @@ export const updateCurrentUser = (userData: UserUpdate) => {
  * @returns 会员信息列表
  */
 export const getUserMemberships = () => {
-    return http.get<Membership[]>("/api/v1/users/users/me/memberships");
+    return http.get<Membership[]>("/api/v1/users/me/memberships");
 };
 
 /**
@@ -35,5 +35,5 @@ export const getUserMemberships = () => {
  * @returns 用户信息
  */
 export const getUserByUid = (uid: string) => {
-    return http.get<User>(`/api/v1/users/users/uid/${uid}`);
+    return http.get<User>(`/api/v1/users/uid/${uid}`);
 }; 

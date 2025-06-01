@@ -192,5 +192,5 @@ export interface AppointmentResponse extends Appointment {
  */
 export interface LoginResponse {
   access_token: string; // 访问令牌
-  user: User; // 用户信息
+  user_info: User; // 用户信息
 }

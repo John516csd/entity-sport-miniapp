@@ -10,7 +10,7 @@ import { Appointment, AppointmentCreate, AppointmentResponse, Coach } from "./ty
  * @returns 创建的预约信息
  */
 export const createAppointment = (appointmentData: AppointmentCreate) => {
-    return http.post<Appointment>("/api/v1/appointments/appointments/", appointmentData);
+    return http.post<Appointment>("/api/v1/appointments/", appointmentData);
 };
 
 /**
@@ -20,7 +20,7 @@ export const createAppointment = (appointmentData: AppointmentCreate) => {
  * @returns 预约列表
  */
 export const getMyAppointments = (skip = 0, limit = 100) => {
-    return http.get<AppointmentResponse[]>("/api/v1/appointments/appointments/", { skip, limit });
+    return http.get<AppointmentResponse[]>("/api/v1/appointments/", { skip, limit });
 };
 
 /**
@@ -42,5 +42,5 @@ export const getAvailableCoaches = (start: string, end: string) => {
  * @returns 更新后的预约信息
  */
 export const cancelAppointment = (appointmentId: number) => {
-    return http.put<Appointment>(`/api/v1/appointments/appointments/${appointmentId}/cancel`);
+    return http.put<Appointment>(`/api/v1/appointments/${appointmentId}/cancel`);
 }; 

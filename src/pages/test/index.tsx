@@ -569,7 +569,7 @@ export default function TestPage() {
 
             {selectedCoach && timeSlots.length === 0 && (
               <View className='no-time-slots'>
-                <Text className='warning-text'>教练当天没有可用时间，请点击教练卡片上的"可用时间"按钮查看</Text>
+                <Text className='warning-text'>教练当天没有可用时间，请点击教练卡片上的&quot;可用时间&quot;按钮查看</Text>
               </View>
             )}
 

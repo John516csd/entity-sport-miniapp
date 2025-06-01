@@ -83,7 +83,7 @@ function WeappLoginButton(props: WeappLoginButtonProps) {
       });
       console.log("🚀 ~ handleGetPhoneNumber ~ res:", res);
 
-      const { access_token, user } = res;
+      const { access_token, user_info } = res;
 
       // 确保存储token正确
       if (access_token) {
@@ -101,7 +101,7 @@ function WeappLoginButton(props: WeappLoginButtonProps) {
         console.error("No access_token in response:", res);
       }
 
-      onSuccess && onSuccess(access_token, user);
+      onSuccess && onSuccess(access_token, user_info);
 
       Taro.showToast({
         title: "登录成功",
