@@ -1,0 +1,94 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    padding: 32px;
+    box-sizing: border-box;
+    background-color: #f7f8fa;
+    min-height: 100vh;
+}
+
+.formItem {
+    display: flex;
+    align-items: center;
+    margin-bottom: 32px;
+    padding: 24px;
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.label {
+    width: 120px;
+    font-size: 28px;
+    color: #333;
+    margin-right: 20px;
+}
+
+.avatarButton {
+    padding: 0;
+    margin: 0;
+    background-color: transparent;
+    border: none;
+    line-height: normal;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &::after {
+        border: none;
+    }
+}
+
+.avatarImage {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 2px solid #eee;
+}
+
+.nicknameInput {
+    flex: 1;
+    height: 80px;
+    line-height: 80px;
+    font-size: 28px;
+    padding: 0 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+}
+
+.nicknameHint {
+    font-size: 24px;
+    color: #999;
+    margin-top: -20px;
+    margin-bottom: 40px;
+    padding-left: 24px;
+}
+
+.saveButton,
+.cancelButton {
+    height: 88px;
+    line-height: 88px;
+    border-radius: 44px;
+    font-size: 32px;
+    text-align: center;
+    margin-top: 20px;
+    border: none;
+}
+
+.saveButton {
+    background-color: #1989fa;
+    color: white;
+}
+
+.disabledButton {
+    background-color: #c8c9cc;
+    color: #fff;
+    opacity: 0.6;
+}
+
+.cancelButton {
+    background-color: #fff;
+    color: #666;
+    border: 1px solid #ddd;
+    margin-top: 24px;
+} 

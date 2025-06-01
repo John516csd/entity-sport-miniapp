@@ -9,6 +9,7 @@ export default defineAppConfig({
     'pages/login/index',
     'pages/appointment/index',
     'pages/profile/index',
+    'pages/profile-edit/index',
     'pages/test/index'
   ],
   window: {

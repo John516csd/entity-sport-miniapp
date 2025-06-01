@@ -14,6 +14,7 @@ import { localizeDate } from "@/utils/date";
 import MenuItemWrapper from "@/components/menu-item-wrapper";
 import { CardTypeName } from "@/types";
 import DefaultAvatar from "@/assets/profile/default-avatar.png";
+import ProfileCard from "@/components/profile-card";
 
 const Profile: React.FC = () => {
   const { login, checkLoginStatus, getState, logout } = useUserStore;
@@ -108,7 +109,16 @@ const Profile: React.FC = () => {
 
   return (
     <View className={styles.wrapper}>
-      <View className={styles.profile_header}>
+      <View className={styles.profile_card_wrapper}>
+        <ProfileCard
+          name={userState.user?.name || "xxx"}
+          avatarUrl={userState.user?.avatar_url || DefaultAvatar}
+          onEditClick={() =>
+            Taro.navigateTo({ url: "/pages/profile-edit/index" })
+          }
+        />
+      </View>
+      {/* <View className={styles.profile_header}>
         <Image
           src={userState.user?.avatar_url || DefaultAvatar}
           className={styles.profile_avatar}
@@ -116,7 +126,7 @@ const Profile: React.FC = () => {
         <Text className={styles.profile_name}>
           {userState.user?.name || "xxx"}
         </Text>
-      </View>
+      </View> */}
       {
         <View className={styles.profile_content}>
           {/* 会员卡信息 */}
