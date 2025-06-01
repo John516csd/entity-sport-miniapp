@@ -3,11 +3,11 @@ import { Button } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import { useState } from "react";
 import "./index.less";
-import { login, User, UserInfoWechat } from "@/api";
+import { login, User } from "@/api";
 
 interface WeappLoginButtonProps {
   className?: string;
-  onSuccess?: (token: string, userInfoWechat?: UserInfoWechat, userInfo?: User) => void;
+  onSuccess?: (token: string, userInfo?: User) => void;
 }
 
 function WeappLoginButton(props: WeappLoginButtonProps) {
@@ -15,7 +15,10 @@ function WeappLoginButton(props: WeappLoginButtonProps) {
   const [isLogin, setIsLogin] = useState(false);
 
   // 处理获取用户信息
-  const handleGetUserInfo = async (): Promise<UserInfoWechat | undefined> => {
+  const handleGetUserInfo = async (): Promise<{
+    encryptedData: string;
+    iv: string;
+  }> => {
     try {
       const modalRes = await Taro.showModal({
         title: "授权提示",
@@ -30,13 +33,14 @@ function WeappLoginButton(props: WeappLoginButtonProps) {
         });
         console.log("🚀 ~ handleGetUserInfo ~ profileRes:", profileRes);
 
-        const { userInfo } = profileRes;
-        return userInfo as UserInfoWechat;
+        const { encryptedData, iv } = profileRes;
+        return { encryptedData, iv };
       } else {
         Taro.showToast({
           title: "您已取消授权",
           icon: "none",
         });
+        return { encryptedData: "", iv: "" };
       }
     } catch (error) {
       console.error("获取用户信息失败:", error);
@@ -44,6 +48,7 @@ function WeappLoginButton(props: WeappLoginButtonProps) {
         title: "获取用户信息失败",
         icon: "none",
       });
+      return { encryptedData: "", iv: "" };
     }
   };
 
@@ -56,7 +61,7 @@ function WeappLoginButton(props: WeappLoginButtonProps) {
         throw new Error(e.detail.errMsg);
       }
 
-      const userInfoWechat = await handleGetUserInfo();
+      const { encryptedData, iv } = await handleGetUserInfo();
 
       // 获取登录code
       const loginResult = await Taro.login();
@@ -71,7 +76,11 @@ function WeappLoginButton(props: WeappLoginButtonProps) {
       console.log("🚀 ~ onGetPhoneNumber ~ detail:", e?.detail);
 
       // 使用封装的请求方法
-      const res = await login({ code, user_info: userInfoWechat as UserInfoWechat });
+      const res = await login({
+        code,
+        encrypted_data: encryptedData,
+        iv: iv,
+      });
       console.log("🚀 ~ handleGetPhoneNumber ~ res:", res);
 
       const { access_token, user } = res;
@@ -79,17 +88,20 @@ function WeappLoginButton(props: WeappLoginButtonProps) {
       // 确保存储token正确
       if (access_token) {
         try {
-          Taro.setStorageSync('token', access_token);
-          console.log('Token saved successfully:', access_token);
-          console.log('Storage keys after save:', Taro.getStorageInfoSync().keys);
+          Taro.setStorageSync("token", access_token);
+          console.log("Token saved successfully:", access_token);
+          console.log(
+            "Storage keys after save:",
+            Taro.getStorageInfoSync().keys
+          );
         } catch (storageError) {
-          console.error('Failed to save token:', storageError);
+          console.error("Failed to save token:", storageError);
         }
       } else {
-        console.error('No access_token in response:', res);
+        console.error("No access_token in response:", res);
       }
 
-      onSuccess && onSuccess(access_token, userInfoWechat, user);
+      onSuccess && onSuccess(access_token, user);
 
       Taro.showToast({
         title: "登录成功",

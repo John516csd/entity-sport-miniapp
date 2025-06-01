@@ -5,8 +5,9 @@ import { http } from "../utils/request";
 import { LoginResponse, UserInfoWechat } from "./types";
 
 export interface LoginParams {
-    code: string;
-    user_info: UserInfoWechat;
+  code: string;
+  encrypted_data: string;
+  iv: string;
 }
 
 /**
@@ -15,11 +16,13 @@ export interface LoginParams {
  * @returns 登录响应，包含访问令牌和用户信息
  */
 export const login = ({
-    code,
-    user_info,
+  code,
+  encrypted_data,
+  iv,
 }: LoginParams): Promise<LoginResponse> => {
-    return http.post("/api/v1/wechat/login", {
-        code,
-        user_info,
-    });
-}; 
+  return http.post("/api/v1/wechat/login", {
+    code,
+    encrypted_data,
+    iv,
+  });
+};
