@@ -10,7 +10,8 @@ export default defineAppConfig({
     'pages/appointment/index',
     'pages/profile/index',
     'pages/profile-edit/index',
-    'pages/test/index'
+    'pages/test/index',
+    'pages/leave-records/index'
   ],
   window: {
     backgroundTextStyle: 'light',

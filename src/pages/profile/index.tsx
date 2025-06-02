@@ -15,6 +15,7 @@ import MenuItemWrapper from "@/components/menu-item-wrapper";
 import { CardTypeName } from "@/types";
 import DefaultAvatar from "@/assets/profile/default-avatar.png";
 import ProfileCard from "@/components/profile-card";
+import LeavePart from "@/components/leave-part";
 
 const Profile: React.FC = () => {
   const { login, checkLoginStatus, getState, logout } = useUserStore;
@@ -154,6 +155,15 @@ const Profile: React.FC = () => {
               onCancelAppointment={handleCancelAppointment}
             />
           </MenuItemWrapper>
+          {/* 请假 */}
+          <LeavePart
+            onLeaveRequest={() => {
+              console.log("请假");
+            }}
+            onLeaveRecord={() => {
+              console.log("请假记录");
+            }}
+          />
           {/* 退出登录 */}
           {getState().isLoggedIn && (
             <View className={styles.profile_logout}>
