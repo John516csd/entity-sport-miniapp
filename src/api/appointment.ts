@@ -42,5 +42,5 @@ export const getAvailableCoaches = (start: string, end: string) => {
  * @returns 更新后的预约信息
  */
 export const cancelAppointment = (appointmentId: number) => {
-    return http.put<Appointment>(`/api/v1/appointments/${appointmentId}/cancel`);
+    return http.put<Appointment>(`/api/v1/appointments/appointments/${appointmentId}/cancel`);
 }; 

@@ -5,6 +5,7 @@ import { useUserStore } from "@/store/user";
 import { useStore } from "@/hooks/useStore";
 import styles from "./index.module.less";
 import DefaultAvatar from "@/assets/profile/default-avatar.png";
+import { updateCurrentUser } from "@/api/user";
 
 // Assume an API function exists for updating profile.
 // import { updateUserProfile } from "@/api/user"; // You'll need to create/uncomment this
@@ -53,22 +54,21 @@ const ProfileEdit: React.FC = () => {
 
     // TODO: Implement the actual API call to update the profile
     // For example:
-    // try {
-    //   Taro.showLoading({ title: "Saving..." });
-    //   const updatedProfile = await updateUserProfile({
-    //     id: userState.user.id,
-    //     name: nickname,
-    //     avatar_url: avatarUrl, // This might need to be the uploaded URL if different from chosen one
-    //   });
-    //   setUser(updatedProfile); // Update store with response from API
-    //   Taro.hideLoading();
-    //   Taro.showToast({ title: "Profile updated!", icon: "success" });
-    //   Taro.navigateBack();
-    // } catch (error) {
-    //   Taro.hideLoading();
-    //   Taro.showToast({ title: "Failed to update profile.", icon: "none" });
-    //   console.error("Failed to save profile:", error);
-    // }
+    try {
+      Taro.showLoading({ title: "Saving..." });
+      const updatedProfile = await updateCurrentUser({
+        name: nickname,
+        avatar_url: avatarUrl, // This might need to be the uploaded URL if different from chosen one
+      });
+      setUser(updatedProfile); // Update store with response from API
+      Taro.hideLoading();
+      Taro.showToast({ title: "Profile updated!", icon: "success" });
+      Taro.navigateBack();
+    } catch (error) {
+      Taro.hideLoading();
+      Taro.showToast({ title: "Failed to update profile.", icon: "none" });
+      console.error("Failed to save profile:", error);
+    }
 
     // Placeholder for actual save logic - simulating API call
     console.log("Saving changes:", { nickname, avatarUrl });
