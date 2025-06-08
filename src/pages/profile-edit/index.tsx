@@ -23,7 +23,7 @@ const ProfileEdit: React.FC = () => {
     // Initialize with current user data
     if (userState.user) {
       const currentAvatar = userState.user.avatar_url || DefaultAvatar;
-      const currentNickname = userState.user.name || "";
+      const currentNickname = userState.user.nick_name || "";
       setAvatarUrl(currentAvatar);
       setNickname(currentNickname);
       setOriginalAvatarUrl(currentAvatar);
@@ -145,9 +145,8 @@ const ProfileEdit: React.FC = () => {
       </Text>
 
       <Button
-        className={`${styles.saveButton} ${
-          !canSaveChanges ? styles.disabledButton : ""
-        }`}
+        className={`${styles.saveButton} ${!canSaveChanges ? styles.disabledButton : ""
+          }`}
         onClick={handleSaveChanges}
         disabled={!canSaveChanges}
       >

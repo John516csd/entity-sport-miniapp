@@ -112,7 +112,7 @@ const Profile: React.FC = () => {
     <View className={styles.wrapper}>
       <View className={styles.profile_card_wrapper}>
         <ProfileCard
-          name={userState.user?.name || "xxx"}
+          name={userState.user?.nick_name || "xxx"}
           avatarUrl={userState.user?.avatar_url || DefaultAvatar}
           onEditClick={() =>
             Taro.navigateTo({ url: "/pages/profile-edit/index" })
