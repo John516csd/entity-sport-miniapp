@@ -52,7 +52,7 @@ export const getMembershipLeaves = (membershipId: number) => {
  * @returns 合同列表
  */
 export const getMyContracts = (skip = 0, limit = 100) => {
-    return http.get<MembershipContractResponse[]>("/api/v1/contracts/my-contracts/", { skip, limit });
+    return http.get<MembershipContractResponse[]>("/api/v1/contracts/my-contracts", { skip, limit });
 };
 
 /**

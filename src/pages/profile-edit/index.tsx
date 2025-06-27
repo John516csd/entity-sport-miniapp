@@ -5,7 +5,7 @@ import { useUserStore } from "@/store/user";
 import { useStore } from "@/hooks/useStore";
 import styles from "./index.module.less";
 import DefaultAvatar from "@/assets/profile/default-avatar.png";
-import { updateCurrentUser } from "@/api/user";
+import { updateCurrentUser, updateCurrentUserWithFile } from "@/api/user";
 
 // Assume an API function exists for updating profile.
 // import { updateUserProfile } from "@/api/user"; // You'll need to create/uncomment this
@@ -18,6 +18,7 @@ const ProfileEdit: React.FC = () => {
   const [nickname, setNickname] = useState<string>("");
   const [originalAvatarUrl, setOriginalAvatarUrl] = useState<string>("");
   const [originalNickname, setOriginalNickname] = useState<string>("");
+  const [tempAvatarPath, setTempAvatarPath] = useState<string>("");
 
   useLoad(() => {
     // Initialize with current user data
@@ -34,11 +35,15 @@ const ProfileEdit: React.FC = () => {
   const handleAvatarChoose = (event) => {
     const { avatarUrl: tempAvatarUrl } = event.detail;
     if (tempAvatarUrl) {
+      console.log("WeChat temporary avatar URL:", tempAvatarUrl);
+      
+      // 保存微信临时文件路径用于上传
+      setTempAvatarPath(tempAvatarUrl);
+      
+      // 显示选择的头像预览
       setAvatarUrl(tempAvatarUrl);
-      // Here you might want to upload the tempAvatarUrl to your server
-      // and get a permanent URL if WeChat's URL is temporary.
-      // For now, we'll just use the temp URL.
-      console.log("New avatar chosen:", tempAvatarUrl);
+      
+      console.log("Avatar selected, will upload on save:", tempAvatarUrl);
     }
   };
 
@@ -48,49 +53,49 @@ const ProfileEdit: React.FC = () => {
 
   const handleSaveChanges = async () => {
     if (!userState.user) {
-      Taro.showToast({ title: "User data not loaded.", icon: "none" });
+      Taro.showToast({ title: "用户数据未加载", icon: "none" });
       return;
     }
 
-    // TODO: Implement the actual API call to update the profile
-    // For example:
     try {
-      Taro.showLoading({ title: "Saving..." });
-      const updatedProfile = await updateCurrentUser({
+      // 准备更新数据
+      const updateData = {
         name: nickname,
-        avatar_url: avatarUrl, // This might need to be the uploaded URL if different from chosen one
+      };
+
+      let updatedProfile;
+      
+      // 如果有新头像需要上传
+      if (tempAvatarPath) {
+        console.log("Uploading avatar with user data:", updateData);
+        updatedProfile = await updateCurrentUserWithFile(updateData, tempAvatarPath);
+      } else {
+        console.log("Updating user data without avatar:", updateData);
+        updatedProfile = await updateCurrentUser(updateData);
+      }
+
+      // 更新本地状态
+      setUser(updatedProfile);
+      
+      // 更新本地存储
+      await Taro.setStorage({
+        key: "userInfo",
+        data: updatedProfile,
       });
-      setUser(updatedProfile); // Update store with response from API
-      Taro.hideLoading();
-      Taro.showToast({ title: "Profile updated!", icon: "success" });
-      Taro.navigateBack();
+
+      Taro.showToast({ title: "个人信息已保存", icon: "success" });
+      
+      setTimeout(() => {
+        Taro.navigateBack();
+      }, 1500);
+      
     } catch (error) {
-      Taro.hideLoading();
-      Taro.showToast({ title: "Failed to update profile.", icon: "none" });
       console.error("Failed to save profile:", error);
+      Taro.showToast({ 
+        title: error.message || "保存失败，请重试", 
+        icon: "none" 
+      });
     }
-
-    // Placeholder for actual save logic - simulating API call
-    console.log("Saving changes:", { nickname, avatarUrl });
-
-    // Update user state in the store with new data
-    const updatedUser = {
-      ...userState.user,
-      name: nickname,
-      avatar_url: avatarUrl,
-    };
-    setUser(updatedUser);
-
-    // Also update local storage
-    await Taro.setStorage({
-      key: "userInfo",
-      data: updatedUser,
-    });
-
-    Taro.showToast({ title: "个人信息已保存", icon: "success" });
-    setTimeout(() => {
-      Taro.navigateBack();
-    }, 1500);
   };
 
   const canSaveChanges = useMemo(() => {
@@ -99,16 +104,15 @@ const ProfileEdit: React.FC = () => {
     // Also, make sure original values are set before allowing save
     if (originalAvatarUrl === "" && originalNickname === "") return false;
 
-    const avatarChanged = avatarUrl !== originalAvatarUrl;
+    const avatarChanged = tempAvatarPath !== ""; // 有新头像选择
     const nicknameChanged =
       nickname !== originalNickname && nickname.trim() !== ""; // ensure nickname is not just empty spaces
     console.log("avatarChanged", avatarChanged);
     console.log("nicknameChanged", nicknameChanged);
     return avatarChanged || nicknameChanged;
   }, [
-    avatarUrl,
+    tempAvatarPath,
     nickname,
-    originalAvatarUrl,
     originalNickname,
     userState.user,
   ]);

@@ -30,5 +30,5 @@ export const getCoachById = (coachId: number) => {
  * @returns 可用时间段列表
  */
 export const getCoachAvailability = (coachId: number, date: string) => {
-    return http.get<TimeSlot[]>(`/api/v1/coaches/${coachId}/availability`, { date_param: date });
+    return http.get<TimeSlot[]>(`/api/v1/coaches/${coachId}/availability`, { date: date });
 }; 

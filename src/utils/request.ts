@@ -38,6 +38,8 @@ const requestInterceptor = (options: RequestOptions) => {
   };
 
   // 请求日志
+  console.log('🔧 BASE_API_URL:', BASE_API_URL);
+  console.log('🔧 options.url:', options.url);
   console.log(`🚀～ request: ${finalOptions.method} ${finalOptions.url}`, finalOptions.data || '');
 
   if (finalOptions.showLoading) {
@@ -99,6 +101,65 @@ const request = async <T = any>(options: RequestOptions): Promise<T> => {
   }
 };
 
+// 文件上传方法 - 使用 POST multipart 上传
+const uploadFile = async <T = any>(
+  url: string,
+  filePath: string,
+  name: string = 'file',
+  formData?: Record<string, any>
+): Promise<T> => {
+  const token = Taro.getStorageSync('token');
+  
+  try {
+    Taro.showLoading({ title: '上传中...' });
+    
+    // Taro.uploadFile 只支持 POST 请求，不使用 _method 参数
+    const finalFormData = {
+      ...formData,
+    };
+    
+    const uploadOptions = {
+      url: `${BASE_API_URL}${url}`,
+      filePath,
+      name,
+      formData: finalFormData,
+      header: {
+        'Authorization': token ? `Bearer ${token}` : '',
+      },
+    };
+    
+    console.log(`🚀～ upload request:`, uploadOptions);
+    
+    const res = await Taro.uploadFile(uploadOptions);
+
+    console.log(`🚀～ upload response: ${res.statusCode}`, res.data);
+
+    if (res.statusCode === 200 || res.statusCode === 201) {
+      try {
+        const responseData = JSON.parse(res.data) as ResponseData<T>;
+        if (responseData.code === 200) {
+          return responseData.data;
+        } else {
+          throw new Error(responseData.message || '上传失败');
+        }
+      } catch (parseError) {
+        console.error('Failed to parse upload response:', parseError);
+        throw new Error('服务器响应格式错误');
+      }
+    }
+    
+    throw new Error(`上传失败，状态码: ${res.statusCode}`);
+  } catch (error) {
+    Taro.showToast({
+      title: error.message || '上传失败',
+      icon: 'none',
+    });
+    throw error;
+  } finally {
+    Taro.hideLoading();
+  }
+};
+
 // 封装常用请求方法
 export const http = {
   get: <T = any>(url: string, data?: any, options?: Partial<RequestOptions>) => {
@@ -136,4 +197,6 @@ export const http = {
       ...options,
     });
   },
+
+  upload: uploadFile,
 }; 

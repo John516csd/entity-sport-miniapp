@@ -30,7 +30,7 @@ export const getMyAppointments = (skip = 0, limit = 100) => {
  * @returns 可用教练列表
  */
 export const getAvailableCoaches = (start: string, end: string) => {
-    return http.get<Coach[]>("/api/v1/appointments/available-coaches/", {
+    return http.get<Coach[]>("/api/v1/appointments/available-coaches", {
         appointment_start: start,
         appointment_end: end,
     });
@@ -42,5 +42,5 @@ export const getAvailableCoaches = (start: string, end: string) => {
  * @returns 更新后的预约信息
  */
 export const cancelAppointment = (appointmentId: number) => {
-    return http.put<Appointment>(`/api/v1/appointments/appointments/${appointmentId}/cancel`);
+    return http.put<Appointment>(`/api/v1/appointments/${appointmentId}/cancel`);
 }; 

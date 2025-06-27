@@ -6,8 +6,8 @@ import { LoginResponse, UserInfoWechat } from "./types";
 
 export interface LoginParams {
   code: string;
-  encrypted_data: string;
-  iv: string;
+  encrypted_data?: string;
+  iv?: string;
 }
 
 /**
@@ -20,9 +20,15 @@ export const login = ({
   encrypted_data,
   iv,
 }: LoginParams): Promise<LoginResponse> => {
-  return http.post("/api/v1/wechat/login", {
-    code,
-    encrypted_data,
-    iv,
-  });
+  const requestData: any = { code };
+  
+  if (encrypted_data) {
+    requestData.encrypted_data = encrypted_data;
+  }
+  
+  if (iv) {
+    requestData.iv = iv;
+  }
+  
+  return http.post("/api/v1/wechat/login", requestData);
 };
