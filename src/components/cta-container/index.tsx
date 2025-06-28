@@ -18,21 +18,34 @@ const CtaContainer = () => {
     const [distance, setDistance] = useState<number | null>(0);
 
     useEffect(() => {
-        // 获取用户位置
-        Taro.getLocation({
-            type: 'gcj02', // 使用国测局坐标系
+        // 先检查用户是否授权位置信息
+        Taro.getSetting({
             success: function (res) {
-                const userLatitude = res.latitude;
-                const userLongitude = res.longitude;
+                if (res.authSetting['scope.userLocation']) {
+                    // 已授权，获取用户位置
+                    Taro.getLocation({
+                        type: 'gcj02', // 使用国测局坐标系
+                        success: function (res) {
+                            const userLatitude = res.latitude;
+                            const userLongitude = res.longitude;
 
-                // 计算距离
-                const dist = calculateDistance(
-                    userLatitude,
-                    userLongitude,
-                    GYM_LOCATION.latitude,
-                    GYM_LOCATION.longitude
-                );
-                setDistance(dist);
+                            // 计算距离
+                            const dist = calculateDistance(
+                                userLatitude,
+                                userLongitude,
+                                GYM_LOCATION.latitude,
+                                GYM_LOCATION.longitude
+                            );
+                            setDistance(dist);
+                        },
+                        fail: function () {
+                            setDistance(0);
+                        }
+                    });
+                } else {
+                    // 未授权，设置默认距离
+                    setDistance(0);
+                }
             },
             fail: function () {
                 setDistance(0);
@@ -42,6 +55,35 @@ const CtaContainer = () => {
 
     // 处理导航点击事件
     const handleNavigateToGym = () => {
+        // 先检查位置权限，如果没有则请求授权
+        Taro.getSetting({
+            success: function (res) {
+                if (!res.authSetting['scope.userLocation']) {
+                    // 没有授权，请求授权
+                    Taro.authorize({
+                        scope: 'scope.userLocation',
+                        success: function () {
+                            // 授权成功，打开位置
+                            openLocation();
+                        },
+                        fail: function () {
+                            // 授权失败，直接打开位置（不显示距离）
+                            openLocation();
+                        }
+                    });
+                } else {
+                    // 已有授权，直接打开位置
+                    openLocation();
+                }
+            },
+            fail: function () {
+                openLocation();
+            }
+        });
+    };
+
+    // 打开位置的通用函数
+    const openLocation = () => {
         Taro.openLocation({
             latitude: GYM_LOCATION.latitude,
             longitude: GYM_LOCATION.longitude,

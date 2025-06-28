@@ -88,8 +88,16 @@ export const useUserStore = {
   getState: store.getState,
   setState: store.setState,
   subscribe: store.subscribe,
-  login: store.getState().login,
-  logout: store.getState().logout,
-  checkLoginStatus: store.getState().checkLoginStatus,
-  setUser: store.getState().setUser,
+  get login() {
+    return store.getState().login;
+  },
+  get logout() {
+    return store.getState().logout;
+  },
+  get checkLoginStatus() {
+    return store.getState().checkLoginStatus;
+  },
+  get setUser() {
+    return store.getState().setUser;
+  },
 };

@@ -34,5 +34,7 @@ export const useAppointmentStore = {
     getState: store.getState,
     setState: store.setState,
     subscribe: store.subscribe,
-    fetchAppointments: store.getState().fetchAppointments
+    get fetchAppointments() {
+        return store.getState().fetchAppointments;
+    }
 }; 

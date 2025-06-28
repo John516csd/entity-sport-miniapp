@@ -10,13 +10,23 @@ import { BASE_API_URL } from "@/constants";
 import Taro from "@tarojs/taro";
 import { Coach, getCoaches, createAppointment, TimeSlot } from "@/api";
 import { useMembershipStore } from "@/store/membership";
+import { useGlobalModalManager } from "@/hooks/useTabSwitchReset";
 
 const Appointment: React.FC = () => {
     const [selectedCoach, setSelectedCoach] = useState<Coach | null>(null);
     const [dateSelectorVisible, setDateSelectorVisible] = useState<boolean>(false);
     const [coaches, setCoaches] = useState<Coach[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
+    const [resetTrigger, setResetTrigger] = useState<number>(0);
     const { selectedMembership, fetchMemberships } = useMembershipStore.getState();
+
+    // 使用全局模态框管理（只关闭弹窗）
+    const { closeAllModals } = useGlobalModalManager();
+    
+    // 页面隐藏时关闭所有模态框
+    Taro.useDidHide(() => {
+        closeAllModals();
+    });
 
     // 获取教练列表
     const handleGetCoaches = async () => {
@@ -35,9 +45,19 @@ const Appointment: React.FC = () => {
         }
     };
 
-    // 组件加载时获取数据
+    // 重置状态到初始状态
+    const resetToInitialState = () => {
+        setSelectedCoach(null);
+        setDateSelectorVisible(false);
+        // 触发日期选择器内部状态重置
+        setResetTrigger(prev => prev + 1);
+    };
+
+    // 组件加载时获取数据和重置状态
     Taro.useDidShow(() => {
         console.log("🚀 ~ Taro.useDidShow ~ useDidShow:")
+        // 每次进入预约页面时重置预约相关状态（不影响登录状态）
+        resetToInitialState();
         fetchMemberships();
         handleGetCoaches();
     });
@@ -85,8 +105,8 @@ const Appointment: React.FC = () => {
                 duration: 3000
             });
 
-            // 关闭日期选择器
-            setDateSelectorVisible(false);
+            // 重置状态到初始状态
+            resetToInitialState();
         } catch (error) {
             console.error('预约失败', error);
             Taro.showToast({
@@ -117,6 +137,7 @@ const Appointment: React.FC = () => {
                 visible={dateSelectorVisible}
                 onClose={() => setDateSelectorVisible(false)}
                 onConfirm={handleConfirmDate}
+                resetTrigger={resetTrigger}
             />
         </View>
     );

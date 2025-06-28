@@ -3,9 +3,11 @@ import { useState } from "react";
 import Taro from "@tarojs/taro";
 import styles from "./index.module.less";
 import LeaveRequestDrawer from "../leave-request-drawer";
-import { createMembershipLeave } from "@/api/membership";
+import { createMembershipLeave, getMembershipLeaves } from "@/api/membership";
 import { useStore } from "@/hooks/useStore";
 import { useMembershipStore } from "@/store/membership";
+import { MembershipLeaveResponse } from "@/api/types";
+import { useModalManager } from "@/hooks/useModalManager";
 
 interface LeavePartProps {
   onLeaveRequest?: () => void;
@@ -14,10 +16,35 @@ interface LeavePartProps {
 
 const LeavePart = ({ onLeaveRequest, onLeaveRecord }: LeavePartProps) => {
   const [showLeaveDrawer, setShowLeaveDrawer] = useState(false);
+  const [leaveRecords, setLeaveRecords] = useState<MembershipLeaveResponse[]>([]);
   const membershipState = useStore(useMembershipStore);
 
-  const handleLeaveRequest = () => {
+  const handleLeaveRequest = async () => {
     console.log("请假");
+    
+    // 获取当前选中的会员卡
+    const selectedMembership = membershipState.selectedMembership || membershipState.memberships[0];
+    
+    if (!selectedMembership) {
+      Taro.showToast({
+        title: "请先获取会员卡信息",
+        icon: "error",
+      });
+      return;
+    }
+
+    try {
+      // 获取该会员卡的请假记录
+      const leaves = await getMembershipLeaves(selectedMembership.id);
+      // 过滤掉已取消的请假记录，只保留有效的请假记录
+      const activeLeaves = leaves.filter(leave => leave.status !== 'cancelled');
+      setLeaveRecords(activeLeaves);
+    } catch (error) {
+      console.error("获取请假记录失败:", error);
+      // 即使获取失败也允许继续，只是不能检测冲突
+      setLeaveRecords([]);
+    }
+    
     setShowLeaveDrawer(true);
     onLeaveRequest?.();
   };
@@ -35,27 +62,24 @@ const LeavePart = ({ onLeaveRequest, onLeaveRecord }: LeavePartProps) => {
     endDate: string;
     reason: string;
   }) => {
+    // 获取当前选中的会员卡
+    const selectedMembership = membershipState.selectedMembership || membershipState.memberships[0];
+    
+    if (!selectedMembership) {
+      Taro.showToast({
+        title: "请先获取会员卡信息",
+        icon: "error",
+      });
+      throw new Error("请先获取会员卡信息");
+    }
+
     try {
-      // 获取当前选中的会员卡
-      const selectedMembership = membershipState.selectedMembership || membershipState.memberships[0];
-      
-      if (!selectedMembership) {
-        Taro.showToast({
-          title: "请先获取会员卡信息",
-          icon: "error",
-        });
-        return;
-      }
-
-      Taro.showLoading({ title: "提交中..." });
-
       await createMembershipLeave(selectedMembership.id, {
         start_date: data.startDate,
         end_date: data.endDate,
         reason: data.reason,
       });
 
-      Taro.hideLoading();
       Taro.showToast({
         title: "请假申请提交成功",
         icon: "success",
@@ -63,18 +87,38 @@ const LeavePart = ({ onLeaveRequest, onLeaveRecord }: LeavePartProps) => {
 
       setShowLeaveDrawer(false);
     } catch (error) {
-      Taro.hideLoading();
-      console.error("请假申请失败:", error);
-      Taro.showToast({
-        title: "请假申请失败",
-        icon: "error",
-      });
+      const errorMessage = error?.message || "请假申请失败";
+      
+      // 使用 showModal 来显示长消息，因为 showToast 有长度限制
+      if (errorMessage.length > 20) {
+        Taro.showModal({
+          title: "请假申请失败",
+          content: errorMessage,
+          showCancel: false,
+          confirmText: "确定"
+        });
+      } else {
+        Taro.showToast({
+          title: errorMessage,
+          icon: "error",
+        });
+      }
+      
+      // 重新抛出错误，让子组件知道提交失败了
+      throw error;
     }
   };
 
   const handleCloseDrawer = () => {
     setShowLeaveDrawer(false);
   };
+
+  // 使用模态框管理器
+  const enhancedCloseDrawer = useModalManager(
+    'leave-request-drawer',
+    showLeaveDrawer,
+    handleCloseDrawer
+  );
 
   return (
     <>
@@ -106,8 +150,10 @@ const LeavePart = ({ onLeaveRequest, onLeaveRecord }: LeavePartProps) => {
 
       <LeaveRequestDrawer
         visible={showLeaveDrawer}
-        onClose={handleCloseDrawer}
+        onClose={enhancedCloseDrawer}
         onSubmit={handleLeaveSubmit}
+        membership={membershipState.selectedMembership || membershipState.memberships[0]}
+        existingLeaves={leaveRecords}
       />
     </>
   );

@@ -14,40 +14,22 @@ function WeappLoginButton(props: WeappLoginButtonProps) {
   const { onSuccess } = props;
   const [isLogin, setIsLogin] = useState(false);
 
+
   // 处理获取用户信息
   const handleGetUserInfo = async (): Promise<{
     encryptedData: string;
     iv: string;
   }> => {
     try {
-      const modalRes = await Taro.showModal({
-        title: "授权提示",
-        content: "需要获取您的头像、昵称等信息",
-        confirmText: "确认授权",
-        cancelText: "暂不授权",
+      const profileRes = await Taro.getUserProfile({
+        desc: "用于完善会员资料",
       });
 
-      if (modalRes.confirm) {
-        const profileRes = await Taro.getUserProfile({
-          desc: "用于完善会员资料",
-        });
-        console.log("🚀 ~ handleGetUserInfo ~ profileRes:", profileRes);
-
-        const { encryptedData, iv } = profileRes;
-        return { encryptedData, iv };
-      } else {
-        Taro.showToast({
-          title: "您已取消授权",
-          icon: "none",
-        });
-        return { encryptedData: "", iv: "" };
-      }
+      const { encryptedData, iv } = profileRes;
+      return { encryptedData, iv };
     } catch (error) {
       console.error("获取用户信息失败:", error);
-      Taro.showToast({
-        title: "获取用户信息失败",
-        icon: "none",
-      });
+      // 即使获取用户信息失败，也允许继续登录
       return { encryptedData: "", iv: "" };
     }
   };
@@ -71,34 +53,20 @@ function WeappLoginButton(props: WeappLoginButtonProps) {
 
       const { code } = loginResult;
 
-      // 打印调试信息
-      console.log("🚀 ~ onGetUserInfo ~ code:", code);
-      console.log("🚀 ~ onGetPhoneNumber ~ detail:", e?.detail);
-
       // 使用封装的请求方法
       const res = await login({
         code,
         encrypted_data: encryptedData,
         iv: iv,
       });
-      console.log("🚀 ~ handleGetPhoneNumber ~ res:", res);
 
       const { access_token, user_info } = res;
 
       // 确保存储token正确
       if (access_token) {
-        try {
-          Taro.setStorageSync("token", access_token);
-          console.log("Token saved successfully:", access_token);
-          console.log(
-            "Storage keys after save:",
-            Taro.getStorageInfoSync().keys
-          );
-        } catch (storageError) {
-          console.error("Failed to save token:", storageError);
-        }
+        Taro.setStorageSync("token", access_token);
       } else {
-        console.error("No access_token in response:", res);
+        throw new Error("登录响应中没有access_token");
       }
 
       onSuccess && onSuccess(access_token, user_info);
@@ -108,7 +76,6 @@ function WeappLoginButton(props: WeappLoginButtonProps) {
         icon: "success",
       });
     } catch (error) {
-      console.error("登录失败:", error);
       Taro.showToast({
         title: "登录失败",
         icon: "none",

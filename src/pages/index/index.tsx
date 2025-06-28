@@ -1,13 +1,21 @@
 import { View, Button } from '@tarojs/components'
 import { useLoad, navigateTo } from '@tarojs/taro'
+import Taro from '@tarojs/taro'
 import styles from './index.module.less'
 import HomeHeroBanner from '../../components/home-hero-banner'
 import CtaContainer from '../../components/cta-container'
+import { useGlobalModalManager } from '@/hooks/useTabSwitchReset'
 
 export default function Index() {
-  useLoad(() => {
-    console.log('Page loaded.')
-  })
+  useLoad(() => {})
+
+  // 使用全局模态框管理（只关闭弹窗）
+  const { closeAllModals } = useGlobalModalManager();
+  
+  // 页面隐藏时关闭所有模态框
+  Taro.useDidHide(() => {
+    closeAllModals();
+  });
 
   const goToTestPage = () => {
     navigateTo({ url: '/pages/test/index' })

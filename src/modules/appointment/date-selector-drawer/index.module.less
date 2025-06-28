@@ -22,8 +22,9 @@
 .content_wrapper {
     position: relative;
     height: calc(100vh - 400px);
-    background: #fff;
-    box-shadow: 0 -4px 12px rgba(143, 143, 143, 0.2);
+    background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.1);
+    border-radius: 24px 24px 0 0;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -54,8 +55,9 @@
 .drawer_deco_line {
     width: 80px;
     border-radius: 1000px;
-    height: 8px;
-    background-color: #b2b2b2;
+    height: 6px;
+    background: linear-gradient(90deg, #e9ecef 0%, #dee2e6 50%, #e9ecef 100%);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .main_content {
@@ -87,9 +89,11 @@
 
 .date_selector_header {
     width: 100%;
-    font-size: 36px;
-    font-weight: 700;
-    color: #c5c5c5;
+    font-size: 32px;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
 }
 
 .date_selector_list {
@@ -102,28 +106,70 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    border-radius: 12px;
-    padding: 12px;
+    border-radius: 16px;
+    padding: 16px 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+
+    &:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.4) 100%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+    }
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        
+        &:before {
+            opacity: 1;
+        }
+    }
 
     &.selected {
-        background: #000;
+        background: linear-gradient(135deg, #4c6ef5 0%, #364fc7 100%);
+        box-shadow: 0 8px 24px rgba(76, 111, 245, 0.4);
+        transform: translateY(-4px) scale(1.05);
+
+        .date_item_title {
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
 
         .date_item_week_day {
-            color: #fff;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        &:before {
+            opacity: 0;
         }
     }
 }
 
 .date_item_title {
-    font-size: 36px;
+    font-size: 32px;
     font-weight: 700;
-    color: #c5c5c5;
+    color: #343a40;
+    transition: all 0.3s ease;
+    margin-bottom: 4px;
 }
 
 .date_item_week_day {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 500;
-    color: #000000;
+    color: #6c757d;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .time_selector_wrapper {
@@ -134,7 +180,19 @@
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    padding-bottom: 24px;
+    padding: 24px 0;
+    margin-top: 16px;
+    position: relative;
+
+    &:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent 0%, #e9ecef 50%, transparent 100%);
+    }
 }
 
 .time_selector_list {
@@ -142,70 +200,208 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
+    padding: 0 4px;
 }
 
 .time_selector_item {
-    padding: 18px;
-    border-radius: 12px;
-    background-color: #f5f5f5;
+    padding: 20px 24px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 2px solid transparent;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+    &:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.2) 100%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+    }
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        border-color: rgba(76, 111, 245, 0.2);
+        
+        &:before {
+            opacity: 1;
+        }
+    }
+
+    &:active {
+        transform: translateY(0) scale(0.98);
+    }
 
     &.selected {
-        background-color: #000;
+        background: linear-gradient(135deg, #4c6ef5 0%, #364fc7 100%);
+        border-color: #4c6ef5;
+        box-shadow: 0 8px 32px rgba(76, 111, 245, 0.4);
+        transform: translateY(-2px);
 
         .time_selector_item_time {
             color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        &:before {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            opacity: 1;
+        }
+
+        &:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(76, 111, 245, 0.5);
         }
     }
 }
 
 .time_selector_item_time {
     text-align: center;
-    font-size: 32px;
-    font-weight: 700;
-    color: #000000;
+    font-size: 28px;
+    font-weight: 600;
+    color: #495057;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+    position: relative;
+    z-index: 1;
 }
 
 .confirm_button_wrapper {
     width: 100%;
-    padding-bottom: 24px;
+    padding: 24px 0 32px;
+    position: relative;
+
+    &:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent 0%, #e9ecef 50%, transparent 100%);
+    }
 }
 
 .confirm_button {
     width: 100%;
-    height: 80px;
-    background-color: #1e1e1e;
+    height: 88px;
+    background: linear-gradient(135deg, #4c6ef5 0%, #364fc7 100%);
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 12px;
-    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+    border-radius: 20px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(76, 111, 245, 0.3);
+    border: none;
+
+    &:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+    }
+
+    &:hover:not(.disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 32px rgba(76, 111, 245, 0.4);
+        
+        &:before {
+            opacity: 1;
+        }
+    }
+
+    &:active:not(.disabled) {
+        transform: translateY(0) scale(0.98);
+    }
 
     &.disabled {
-        background-color: #b2b2b2;
+        background: linear-gradient(135deg, #adb5bd 0%, #868e96 100%);
+        box-shadow: 0 4px 12px rgba(173, 181, 189, 0.2);
+        cursor: not-allowed;
+        transform: none;
 
         .confirm_button_text {
-            color: #fff;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        &:hover {
+            transform: none;
+            box-shadow: 0 4px 12px rgba(173, 181, 189, 0.2);
         }
     }
 
     .confirm_button_text {
-        font-size: 32px;
-        font-weight: 700;
+        font-size: 30px;
+        font-weight: 600;
         color: #fff;
+        transition: all 0.3s ease;
+        position: relative;
+        z-index: 1;
+        letter-spacing: 0.5px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 }
 
 .loading {
-    padding: 40px;
+    padding: 60px 40px;
     text-align: center;
-    color: #999;
-    font-size: 28px;
+    color: #6c757d;
+    font-size: 26px;
+    font-weight: 500;
+    position: relative;
+    
+    &:before {
+        content: '⏰';
+        display: block;
+        font-size: 48px;
+        margin-bottom: 16px;
+        animation: pulse 2s infinite;
+    }
 }
 
 .empty {
-    padding: 40px;
+    padding: 60px 40px;
     text-align: center;
-    color: #999;
-    font-size: 28px;
+    color: #6c757d;
+    font-size: 26px;
+    font-weight: 500;
+    position: relative;
+    
+    &:before {
+        content: '📅';
+        display: block;
+        font-size: 48px;
+        margin-bottom: 16px;
+        opacity: 0.7;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.7;
+    }
 }

@@ -16,6 +16,7 @@ import { CardTypeName } from "@/types";
 import DefaultAvatar from "@/assets/profile/default-avatar.png";
 import ProfileCard from "@/components/profile-card";
 import LeavePart from "@/components/leave-part";
+import { useGlobalModalManager } from "@/hooks/useTabSwitchReset";
 
 const Profile: React.FC = () => {
   const { login, checkLoginStatus, getState, logout } = useUserStore;
@@ -25,6 +26,14 @@ const Profile: React.FC = () => {
   const appointmentState = useStore(useAppointmentStore);
   const membershipState = useStore(useMembershipStore);
   const selectedMembership = membershipState.selectedMembership;
+
+  // 使用全局模态框管理（只关闭弹窗）
+  const { closeAllModals } = useGlobalModalManager();
+  
+  // 页面隐藏时关闭所有模态框
+  Taro.useDidHide(() => {
+    closeAllModals();
+  });
 
   // 页面显示时检查登录状态
   Taro.useDidShow(() => {
@@ -37,16 +46,19 @@ const Profile: React.FC = () => {
   });
 
   const handleLoginSuccess = async (token: string, userInfo?: User) => {
-    await login(token, userInfo);
-    if (userInfo) {
-      await fetchMemberships();
-      await fetchAppointments();
+    try {
+      await login(token, userInfo);
+      if (userInfo) {
+        await fetchMemberships();
+        await fetchAppointments();
+      }
+    } catch (error) {
+      console.error("Profile: handleLoginSuccess failed:", error);
     }
   };
 
   const handleAppointmentClick = (appointment: any) => {
     // 可以跳转到预约详情页
-    console.log("点击预约:", appointment);
   };
 
   const handleCancelAppointment = (appointment: any) => {
@@ -72,7 +84,6 @@ const Profile: React.FC = () => {
           }
         } else {
           // 用户点了取消
-          console.log("用户放弃取消");
         }
       },
     });
@@ -157,12 +168,8 @@ const Profile: React.FC = () => {
           </MenuItemWrapper>
           {/* 请假 */}
           <LeavePart
-            onLeaveRequest={() => {
-              console.log("请假");
-            }}
-            onLeaveRecord={() => {
-              console.log("请假记录");
-            }}
+            onLeaveRequest={() => {}}
+            onLeaveRecord={() => {}}
           />
           {/* 退出登录 */}
           {getState().isLoggedIn && (

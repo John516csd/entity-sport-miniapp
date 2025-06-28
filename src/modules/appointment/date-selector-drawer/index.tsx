@@ -1,12 +1,15 @@
 import { View } from "@tarojs/components";
-import React, { useMemo, useRef, useState, useEffect } from "react";
+import React, { useMemo, useRef, useState, useEffect, useCallback } from "react";
 import { ITouchEvent } from "@tarojs/components/types/common";
 import styles from "./index.module.less";
 import { generateNextDays } from "@/utils/index";
 import { WEEK_DAYS } from "@/constants";
-import { Coach, getCoachAvailability, TimeSlot } from "@/api";
+import { Coach, getCoachAvailability, TimeSlot, getMembershipLeaves } from "@/api";
 import Taro from "@tarojs/taro";
 import { localizeDate } from "@/utils/date";
+import { useMembershipStore } from "@/store/membership";
+import { MembershipLeaveResponse } from "@/api/types";
+import { useModalManager } from "@/hooks/useModalManager";
 
 export interface DateItem {
   year: number;
@@ -21,6 +24,7 @@ interface DateSelectorDrawerProps {
   visible: boolean;
   onClose: () => void;
   onConfirm: (date: DateItem, timeSlot: TimeSlot) => void;
+  resetTrigger?: number; // 用于触发重置的信号
 }
 
 const DateSelectorDrawer = ({
@@ -28,6 +32,7 @@ const DateSelectorDrawer = ({
   visible,
   onClose,
   onConfirm,
+  resetTrigger,
 }: DateSelectorDrawerProps) => {
   /**
    * 获取14天后的日期
@@ -52,6 +57,15 @@ const DateSelectorDrawer = ({
     useState<TimeSlot>();
   const [availableTimeSlots, setAvailableTimeSlots] = useState<TimeSlot[]>([]);
   const [loading, setLoading] = useState(false);
+  
+  const membershipState = useMembershipStore.getState();
+
+  // 使用模态框管理器
+  const enhancedOnClose = useModalManager(
+    'date-selector-drawer',
+    visible,
+    onClose
+  );
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [touchStartY, setTouchStartY] = useState<number>(0);
@@ -63,6 +77,55 @@ const DateSelectorDrawer = ({
     return !currentSelectedDate || !currentSelectedTimeSlot;
   }, [currentSelectedDate, currentSelectedTimeSlot]);
 
+  // 重置内部状态到初始状态
+  const resetInternalState = useCallback(() => {
+    setCurrentSelectedDate(next14Days[0]);
+    setCurrentSelectedTimeSlot(undefined);
+    setAvailableTimeSlots([]);
+    setCurrentTranslateY(0);
+    setIsDragging(false);
+    setIsInScrollView(false);
+  }, [next14Days]);
+
+  // 响应重置触发器
+  useEffect(() => {
+    if (resetTrigger !== undefined) {
+      resetInternalState();
+    }
+  }, [resetTrigger, resetInternalState]);
+
+  // 检查指定日期是否在请假期间
+  const checkIsOnLeave = useCallback(async (targetDate: string): Promise<{ isOnLeave: boolean; leaveRecord?: MembershipLeaveResponse }> => {
+    const selectedMembership = membershipState.selectedMembership || membershipState.memberships[0];
+    
+    if (!selectedMembership) {
+      return { isOnLeave: false };
+    }
+
+    try {
+      const leaves = await getMembershipLeaves(selectedMembership.id);
+      const activeLeaves = leaves.filter(leave => 
+        leave.status === 'approved' || leave.status === 'pending'
+      );
+
+      const targetDateObj = new Date(targetDate);
+      
+      for (const leave of activeLeaves) {
+        const startDate = new Date(leave.start_date);
+        const endDate = new Date(leave.end_date);
+        
+        if (targetDateObj >= startDate && targetDateObj <= endDate) {
+          return { isOnLeave: true, leaveRecord: leave };
+        }
+      }
+      
+      return { isOnLeave: false };
+    } catch (error) {
+      console.error('检查请假状态失败:', error);
+      return { isOnLeave: false };
+    }
+  }, [membershipState.selectedMembership, membershipState.memberships]);
+
   // 当选中日期或教练改变时，获取可用时间段
   useEffect(() => {
     const fetchAvailableTimeSlots = async () => {
@@ -70,6 +133,26 @@ const DateSelectorDrawer = ({
 
       try {
         setLoading(true);
+        
+        // 首先检查选中日期是否在请假期间
+        const leaveCheckResult = await checkIsOnLeave(currentSelectedDate.date);
+        
+        if (leaveCheckResult.isOnLeave) {
+          const leaveRecord = leaveCheckResult.leaveRecord!;
+          const statusText = leaveRecord.status === 'approved' ? '已批准' : '待审批';
+          
+          Taro.showModal({
+            title: "无法预约",
+            content: `您在选择的日期处于请假期间，无法进行预约\n\n请假状态：${statusText}\n请假时间：${leaveRecord.start_date} 至 ${leaveRecord.end_date}\n${leaveRecord.reason ? `请假理由：${leaveRecord.reason}` : ''}`,
+            showCancel: false,
+            confirmText: "确定"
+          });
+          
+          setAvailableTimeSlots([]);
+          setCurrentSelectedTimeSlot(undefined);
+          return;
+        }
+
         const date = new Date(currentSelectedDate.date);
         const timeSlots = await getCoachAvailability(
           selectedCoach.id,
@@ -97,7 +180,7 @@ const DateSelectorDrawer = ({
     };
 
     fetchAvailableTimeSlots();
-  }, [selectedCoach, currentSelectedDate, visible]);
+  }, [selectedCoach, currentSelectedDate, visible, checkIsOnLeave]);
 
   const handleTouchStart = (e: ITouchEvent) => {
     const target = e.target as HTMLDivElement;
@@ -125,7 +208,7 @@ const DateSelectorDrawer = ({
     setIsDragging(false);
     // 如果滑动距离超过100px，则关闭抽屉
     if (currentTranslateY > 100) {
-      onClose();
+      enhancedOnClose();
     }
 
     // 重置状态
@@ -146,7 +229,7 @@ const DateSelectorDrawer = ({
     if (isConfirmButtonDisabled) return;
     if (!currentSelectedTimeSlot) return;
     onConfirm(currentSelectedDate, currentSelectedTimeSlot);
-    onClose();
+    enhancedOnClose();
   };
 
   return (
@@ -163,7 +246,7 @@ const DateSelectorDrawer = ({
         transition: isDragging ? "none" : "transform 0.3s ease-in-out",
       }}
     >
-      <View className={styles.mask} onClick={onClose}></View>
+      <View className={styles.mask} onClick={enhancedOnClose}></View>
       <View className={styles.content_wrapper}>
         <View className={styles.drawer_deco}>
           <View className={styles.drawer_deco_line}></View>

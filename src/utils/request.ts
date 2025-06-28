@@ -89,10 +89,8 @@ const request = async <T = any>(options: RequestOptions): Promise<T> => {
     const data = await responseInterceptor(res);
     return data as T;
   } catch (error) {
-    Taro.showToast({
-      title: error.message || '请求失败',
-      icon: 'none',
-    });
+    // 对于登录等关键操作，确保错误能够正确传递
+    console.error('Request failed:', error);
     throw error;
   } finally {
     if (shouldShowLoading) {

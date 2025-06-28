@@ -58,6 +58,8 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
               ? "已完成"
               : appointment.status === "cancelled"
               ? "已取消"
+              : appointment.status === "scheduled"
+              ? "已预约"
               : "未开始"}
           </Text>
           <View className={styles.frostedDate}>
