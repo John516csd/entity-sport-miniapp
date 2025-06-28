@@ -6,6 +6,7 @@ import {
     MembershipResponse, 
     MembershipLeaveCreate, 
     MembershipLeaveResponse,
+    MembershipLeaveCreateResponse,
     MembershipContractResponse 
 } from "./types";
 
@@ -33,7 +34,7 @@ export const getMembershipById = (membershipId: number) => {
  * @returns 请假申请信息
  */
 export const createMembershipLeave = (membershipId: number, leaveData: MembershipLeaveCreate) => {
-    return http.post<MembershipLeaveResponse>(`/api/v1/memberships/${membershipId}/leaves`, leaveData);
+    return http.post<MembershipLeaveCreateResponse>(`/api/v1/memberships/${membershipId}/leaves`, leaveData);
 };
 
 /**

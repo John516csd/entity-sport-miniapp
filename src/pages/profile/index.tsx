@@ -24,7 +24,7 @@ const Profile: React.FC = () => {
   const userState = useStore(useUserStore);
   const appointmentState = useStore(useAppointmentStore);
   const membershipState = useStore(useMembershipStore);
-  const { selectedMembership } = membershipState;
+  const selectedMembership = membershipState.selectedMembership;
 
   // 页面显示时检查登录状态
   Taro.useDidShow(() => {

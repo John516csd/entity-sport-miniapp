@@ -2,51 +2,47 @@ import { View, Text, Button } from "@tarojs/components";
 import { useState, useEffect } from "react";
 import Taro from "@tarojs/taro";
 import styles from "./index.module.less";
+import { getMembershipLeaves } from "@/api/membership";
+import { MembershipLeaveResponse, LeaveStatus } from "@/api/types";
+import { useStore } from "@/hooks/useStore";
+import { useMembershipStore } from "@/store/membership";
 
-interface LeaveRecord {
-  id: string;
-  startDate: string;
-  endDate: string;
-  reason: string;
-  status: "pending" | "approved" | "rejected";
-  submitTime: string;
-}
+// 移除本地的LeaveRecord接口，使用API中的MembershipLeaveResponse
 
 const LeaveRecords = () => {
-  const [records, setRecords] = useState<LeaveRecord[]>([]);
+  const [records, setRecords] = useState<MembershipLeaveResponse[]>([]);
+  const [loading, setLoading] = useState(false);
+  const membershipState = useStore(useMembershipStore);
 
   useEffect(() => {
-    // 模拟获取请假记录数据
-    const mockData: LeaveRecord[] = [
-      {
-        id: "1",
-        startDate: "2024-01-15",
-        endDate: "2024-01-17",
-        reason: "感冒发烧需要休息",
-        status: "approved",
-        submitTime: "2024-01-10 14:30",
-      },
-      {
-        id: "2",
-        startDate: "2024-01-20",
-        endDate: "2024-01-21",
-        reason: "家中有事需要处理",
-        status: "pending",
-        submitTime: "2024-01-18 09:15",
-      },
-      {
-        id: "3",
-        startDate: "2024-01-08",
-        endDate: "2024-01-09",
-        reason: "个人事务",
-        status: "rejected",
-        submitTime: "2024-01-05 16:20",
-      },
-    ];
-    setRecords(mockData);
-  }, []);
+    loadLeaveRecords();
+  }, [membershipState.selectedMembership]);
 
-  const getStatusText = (status: string) => {
+  const loadLeaveRecords = async () => {
+    try {
+      // 获取当前选中的会员卡
+      const selectedMembership = membershipState.selectedMembership || membershipState.memberships[0];
+      
+      if (!selectedMembership) {
+        console.log("没有找到会员卡信息");
+        return;
+      }
+
+      setLoading(true);
+      const response = await getMembershipLeaves(selectedMembership.id);
+      setRecords(response);
+    } catch (error) {
+      console.error("获取请假记录失败:", error);
+      Taro.showToast({
+        title: "获取请假记录失败",
+        icon: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getStatusText = (status: LeaveStatus) => {
     switch (status) {
       case "pending":
         return "审核中";
@@ -54,12 +50,14 @@ const LeaveRecords = () => {
         return "已通过";
       case "rejected":
         return "已拒绝";
+      case "cancelled":
+        return "已取消";
       default:
         return "未知";
     }
   };
 
-  const getStatusClass = (status: string) => {
+  const getStatusClass = (status: LeaveStatus) => {
     switch (status) {
       case "pending":
         return styles.status_pending;
@@ -67,6 +65,8 @@ const LeaveRecords = () => {
         return styles.status_approved;
       case "rejected":
         return styles.status_rejected;
+      case "cancelled":
+        return styles.status_rejected; // 取消状态使用和拒绝相同的样式
       default:
         return "";
     }
@@ -74,6 +74,10 @@ const LeaveRecords = () => {
 
   const handleBack = () => {
     Taro.navigateBack();
+  };
+
+  const handleRefresh = () => {
+    loadLeaveRecords();
   };
 
   const calculateDays = (startDate: string, endDate: string) => {
@@ -84,10 +88,30 @@ const LeaveRecords = () => {
     return diffDays;
   };
 
+  const formatDateTime = (dateTimeString: string) => {
+    const date = new Date(dateTimeString);
+    return date.toLocaleString('zh-CN', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
   return (
     <View className={styles.container}>
+      <View className={styles.header}>
+        <Button className={styles.refresh_btn} onClick={handleRefresh} disabled={loading}>
+          {loading ? "刷新中..." : "刷新"}
+        </Button>
+      </View>
       <View className={styles.content}>
-        {records.length === 0 ? (
+        {loading ? (
+          <View className={styles.empty}>
+            <Text className={styles.empty_text}>加载中...</Text>
+          </View>
+        ) : records.length === 0 ? (
           <View className={styles.empty}>
             <Text className={styles.empty_text}>暂无请假记录</Text>
           </View>
@@ -98,10 +122,10 @@ const LeaveRecords = () => {
                 <View className={styles.record_header}>
                   <View className={styles.date_info}>
                     <Text className={styles.date_text}>
-                      {record.startDate} 至 {record.endDate}
+                      {record.start_date} 至 {record.end_date}
                     </Text>
                     <Text className={styles.days_text}>
-                      ({calculateDays(record.startDate, record.endDate)}天)
+                      ({calculateDays(record.start_date, record.end_date)}天)
                     </Text>
                   </View>
                   <View
@@ -117,14 +141,21 @@ const LeaveRecords = () => {
 
                 <View className={styles.reason}>
                   <Text className={styles.reason_label}>请假理由：</Text>
-                  <Text className={styles.reason_text}>{record.reason}</Text>
+                  <Text className={styles.reason_text}>{record.reason || "无"}</Text>
                 </View>
 
                 <View className={styles.submit_time}>
                   <Text className={styles.submit_time_text}>
-                    提交时间：{record.submitTime}
+                    提交时间：{formatDateTime(record.applied_at)}
                   </Text>
                 </View>
+
+                {record.review_comment && (
+                  <View className={styles.review_comment}>
+                    <Text className={styles.review_comment_label}>审核备注：</Text>
+                    <Text className={styles.review_comment_text}>{record.review_comment}</Text>
+                  </View>
+                )}
               </View>
             ))}
           </View>

@@ -40,6 +40,10 @@ export const useMembershipStore = {
     getState: store.getState,
     setState: store.setState,
     subscribe: store.subscribe,
-    fetchMemberships: store.getState().fetchMemberships,
-    setSelectedMembership: store.getState().setSelectedMembership
+    get fetchMemberships() {
+        return store.getState().fetchMemberships;
+    },
+    get setSelectedMembership() {
+        return store.getState().setSelectedMembership;
+    }
 }; 

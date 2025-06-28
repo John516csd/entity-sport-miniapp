@@ -3,6 +3,9 @@ import { useState } from "react";
 import Taro from "@tarojs/taro";
 import styles from "./index.module.less";
 import LeaveRequestDrawer from "../leave-request-drawer";
+import { createMembershipLeave } from "@/api/membership";
+import { useStore } from "@/hooks/useStore";
+import { useMembershipStore } from "@/store/membership";
 
 interface LeavePartProps {
   onLeaveRequest?: () => void;
@@ -11,6 +14,7 @@ interface LeavePartProps {
 
 const LeavePart = ({ onLeaveRequest, onLeaveRecord }: LeavePartProps) => {
   const [showLeaveDrawer, setShowLeaveDrawer] = useState(false);
+  const membershipState = useStore(useMembershipStore);
 
   const handleLeaveRequest = () => {
     console.log("请假");
@@ -26,14 +30,46 @@ const LeavePart = ({ onLeaveRequest, onLeaveRecord }: LeavePartProps) => {
     onLeaveRecord?.();
   };
 
-  const handleLeaveSubmit = (data: {
+  const handleLeaveSubmit = async (data: {
     startDate: string;
     endDate: string;
     reason: string;
   }) => {
-    console.log("请假申请提交:", data);
-    // 这里可以调用API提交请假申请
-    setShowLeaveDrawer(false);
+    try {
+      // 获取当前选中的会员卡
+      const selectedMembership = membershipState.selectedMembership || membershipState.memberships[0];
+      
+      if (!selectedMembership) {
+        Taro.showToast({
+          title: "请先获取会员卡信息",
+          icon: "error",
+        });
+        return;
+      }
+
+      Taro.showLoading({ title: "提交中..." });
+
+      await createMembershipLeave(selectedMembership.id, {
+        start_date: data.startDate,
+        end_date: data.endDate,
+        reason: data.reason,
+      });
+
+      Taro.hideLoading();
+      Taro.showToast({
+        title: "请假申请提交成功",
+        icon: "success",
+      });
+
+      setShowLeaveDrawer(false);
+    } catch (error) {
+      Taro.hideLoading();
+      console.error("请假申请失败:", error);
+      Taro.showToast({
+        title: "请假申请失败",
+        icon: "error",
+      });
+    }
   };
 
   const handleCloseDrawer = () => {

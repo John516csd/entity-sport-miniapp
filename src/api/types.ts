@@ -93,11 +93,16 @@ export interface MembershipResponse extends Membership {
 }
 
 /**
+ * 请假状态枚举
+ */
+export type LeaveStatus = "pending" | "approved" | "rejected" | "cancelled";
+
+/**
  * 会员请假创建接口
  */
 export interface MembershipLeaveCreate {
-  start_date: string; // 开始日期
-  end_date: string; // 结束日期
+  start_date: string; // 开始日期 (YYYY-MM-DD格式)
+  end_date: string; // 结束日期 (YYYY-MM-DD格式)
   reason?: string; // 请假原因
 }
 
@@ -110,8 +115,19 @@ export interface MembershipLeaveResponse {
   start_date: string; // 开始日期
   end_date: string; // 结束日期
   reason?: string; // 请假原因
-  status?: string; // 状态
-  created_at?: string; // 创建时间
+  status: LeaveStatus; // 状态
+  applied_by: string; // 申请人
+  applied_at: string; // 申请时间
+  reviewed_by?: string; // 审核人
+  reviewed_at?: string; // 审核时间
+  review_comment?: string; // 审核备注
+}
+
+/**
+ * 会员请假创建响应接口
+ */
+export interface MembershipLeaveCreateResponse {
+  leave: MembershipLeaveResponse;
 }
 
 /**
