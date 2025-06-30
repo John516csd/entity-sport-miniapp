@@ -87,11 +87,10 @@ export const uploadUserAvatarWithData = async (avatarPath: string, userData: Use
 export const updateCurrentUserWithFile = async (userData: UserUpdate, avatarPath?: string) => {
     if (avatarPath) {
         console.log("🔧 使用 multipart 请求同时更新头像和用户信息");
-        return uploadUserAvatarWithData(avatarPath, userData);
-    } else {
-        console.log("🔧 仅更新用户信息（无头像）");
-        return updateCurrentUser(userData);
+        uploadUserAvatarWithData(avatarPath, userData);
     }
+    console.log("🔧 仅更新用户信息（无头像）");
+    return updateCurrentUser(userData);
 };
 
 /**
