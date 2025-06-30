@@ -13,3 +13,7 @@ export const CardTypeName: Record<CardType, string> = {
     [CardType.PRIVATE]: '私教次卡',
     [CardType.FASCIA]: '筋膜康复次卡'
 };
+
+export const getCardTypeName = (cardType: CardType): string => {
+    return CardTypeName[cardType] || '未知卡类型';
+};

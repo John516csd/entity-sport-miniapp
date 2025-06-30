@@ -1,0 +1,60 @@
+.container {
+    width: 100%;
+    background-color: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.header {
+    width: 100%;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #fff;
+    border: none;
+    border-radius: 0;
+    font-size: inherit;
+    line-height: inherit;
+    text-align: left;
+
+    &:active {
+        background-color: #f8f8f8;
+    }
+}
+
+.title {
+    font-size: 32px;
+    font-weight: 600;
+    color: #333;
+}
+
+.arrow {
+    font-size: 24px;
+    color: #666;
+    transition: transform 0.3s ease;
+    
+    &.expanded {
+        transform: rotate(180deg);
+    }
+}
+
+.content {
+    transition: all 0.3s ease;
+    overflow: hidden;
+    
+    &.collapsed {
+        max-height: 0;
+        opacity: 0;
+    }
+    
+    &.expanded {
+        max-height: 1000px;
+        opacity: 1;
+    }
+}
+
+.content_inner {
+    padding: 0 24px 24px 24px;
+}

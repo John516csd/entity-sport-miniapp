@@ -135,11 +135,13 @@ export interface MembershipLeaveCreateResponse {
  */
 export interface MembershipContractResponse {
   id: number; // 合同ID
-  user_id: string; // 用户ID
-  contract_number: string; // 合同编号
-  signing_date: string; // 签署日期
-  total_amount: number; // 总金额
-  status: string; // 状态
+  uid: string; // 合同唯一标识
+  title: string; // 合同标题
+  description?: string; // 合同描述
+  status: string; // 状态 (active, expired, cancelled)
+  contract_image?: string; // 合同图片路径
+  created_at: string; // 创建时间
+  created_by: string; // 创建者ID
 }
 
 /**

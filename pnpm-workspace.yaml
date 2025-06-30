@@ -1,0 +1,7 @@
+ignoredBuiltDependencies:
+  - '@parcel/watcher'
+  - '@swc/core'
+  - '@tarojs/binding'
+  - core-js
+  - core-js-pure
+  - esbuild

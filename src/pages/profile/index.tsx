@@ -1,14 +1,18 @@
 import React from "react";
 import { View, Text, Image, Button } from "@tarojs/components";
 import VipCard from "../../components/vip-card";
+import MembershipCardsDisplay from "../../components/membership-cards-display";
+import CollapsibleSection from "../../components/collapsible-section";
 import WeappLoginButton from "../../components/wx-login-wrapper";
 import AppointmentHistory from "../../components/appointment-history";
+import ContractPart from "../../components/contract-part";
 import Taro from "@tarojs/taro";
 import styles from "./index.module.less";
 import { cancelAppointment, User, UserInfoWechat } from "@/api";
 import { useUserStore } from "@/store/user";
 import { useMembershipStore } from "@/store/membership";
 import { useAppointmentStore } from "@/store/appointment";
+import { useContractStore } from "@/store/contract";
 import { useStore } from "@/hooks/useStore";
 import { localizeDate } from "@/utils/date";
 import MenuItemWrapper from "@/components/menu-item-wrapper";
@@ -107,6 +111,14 @@ const Profile: React.FC = () => {
         error: null,
       });
 
+      // 清除合同数据
+      useContractStore.setState({
+        contracts: [],
+        currentContract: null,
+        loading: false,
+        error: null,
+      });
+
       Taro.showToast({
         title: "退出成功",
         icon: "success",
@@ -142,30 +154,23 @@ const Profile: React.FC = () => {
       {
         <View className={styles.profile_content}>
           {/* 会员卡信息 */}
-          <MenuItemWrapper label="我的会员">
-            <VipCard
-              cardName={
-                selectedMembership?.type_id
-                  ? CardTypeName[selectedMembership.type_id]
-                  : "暂无"
-              }
-              remainingDays={selectedMembership?.remaining_sessions || 0}
-              expireDate={
-                selectedMembership?.expired_at
-                  ? localizeDate(selectedMembership?.expired_at)
-                  : "xxxx-xx-xx"
-              }
+          <MenuItemWrapper label='我的会员'>
+            <MembershipCardsDisplay
+              memberships={membershipState.memberships}
+              selectedMembership={selectedMembership}
             />
           </MenuItemWrapper>
-          {/* 预约历史 */}
-          <MenuItemWrapper label="预约记录">
+          {/* 我的合同 */}
+          <ContractPart />
+          {/* 预约历史 - 收缩到按钮里 */}
+          <CollapsibleSection title='预约'>
             <AppointmentHistory
               appointments={appointmentState.appointments}
               loading={appointmentState.loading}
               onAppointmentClick={handleAppointmentClick}
               onCancelAppointment={handleCancelAppointment}
             />
-          </MenuItemWrapper>
+          </CollapsibleSection>
           {/* 请假 */}
           <LeavePart
             onLeaveRequest={() => {}}

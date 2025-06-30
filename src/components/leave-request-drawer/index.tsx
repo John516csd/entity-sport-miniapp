@@ -164,7 +164,7 @@ const LeaveRequestDrawer = ({
           <View className={styles.form_item}>
             <Text className={styles.label}>开始时间</Text>
             <Picker
-              mode="date"
+              mode='date'
               value={startDate}
               start={minDate}
               end={maxDate}
@@ -185,7 +185,7 @@ const LeaveRequestDrawer = ({
           <View className={styles.form_item}>
             <Text className={styles.label}>结束时间</Text>
             <Picker
-              mode="date"
+              mode='date'
               value={endDate}
               start={startDate || minDate}
               end={maxDate}
@@ -205,7 +205,7 @@ const LeaveRequestDrawer = ({
             <Text className={styles.label}>请假理由</Text>
             <Textarea
               className={styles.textarea}
-              placeholder="请输入请假理由"
+              placeholder='请输入请假理由'
               value={reason}
               onInput={(e) => setReason(e.detail.value)}
               maxlength={200}

@@ -1,0 +1,239 @@
+.page {
+  min-height: 100vh;
+  background: #f8f9fa;
+  padding: 20px;
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 36px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-size: 28px;
+  color: #666;
+}
+
+.loading,
+.error,
+.empty_state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.loading_text {
+  color: #666;
+  font-size: 28px;
+}
+
+.error_icon,
+.empty_icon {
+  font-size: 120px;
+  margin-bottom: 24px;
+}
+
+.error_text {
+  color: #666;
+  font-size: 28px;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.retry_button {
+  background: #007aff;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 16px 32px;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.empty_title {
+  font-size: 32px;
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.empty_subtitle {
+  font-size: 28px;
+  color: #666;
+  line-height: 1.4;
+}
+
+.contract_list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.contract_card {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+
+  &:active {
+    transform: scale(0.98);
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.12);
+  }
+}
+
+.card_header {
+  padding: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.contract_info {
+  flex: 1;
+}
+
+.contract_number {
+  font-size: 32px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.contract_title {
+  font-size: 32px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.signing_date {
+  font-size: 24px;
+  color: #666;
+}
+
+.contract_date {
+  font-size: 24px;
+  color: #666;
+}
+
+.status_badge {
+  padding: 8px 16px;
+  border-radius: 20px;
+  margin-left: 16px;
+}
+
+.status_active {
+  background: #e8f5e8;
+  
+  .status_text {
+    color: #4caf50;
+  }
+}
+
+.status_expired {
+  background: #ffebee;
+  
+  .status_text {
+    color: #f44336;
+  }
+}
+
+.status_cancelled {
+  background: #f5f5f5;
+  
+  .status_text {
+    color: #999;
+  }
+}
+
+.status_default {
+  background: #e3f2fd;
+  
+  .status_text {
+    color: #2196f3;
+  }
+}
+
+.status_text {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.card_body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.description_section {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.description_label {
+  font-size: 24px;
+  color: #666;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.description_value {
+  font-size: 28px;
+  color: #333;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.amount_section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.amount_label {
+  font-size: 28px;
+  color: #333;
+  font-weight: 500;
+}
+
+.amount_value {
+  font-size: 36px;
+  font-weight: 700;
+  color: #ff6b35;
+}
+
+.card_footer {
+  padding: 20px 24px;
+  background: #fafafa;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.view_detail {
+  font-size: 28px;
+  color: #007aff;
+  font-weight: 500;
+}
+
+.arrow {
+  font-size: 32px;
+  color: #ccc;
+  font-weight: 300;
+}

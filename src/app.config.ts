@@ -12,7 +12,9 @@ export default defineAppConfig({
     'pages/profile/index',
     'pages/profile-edit/index',
     'pages/test/index',
-    'pages/leave-records/index'
+    'pages/leave-records/index',
+    'pages/contract-list/index',
+    'pages/contract-detail/index'
   ],
   window: {
     backgroundTextStyle: 'light',

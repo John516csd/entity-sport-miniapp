@@ -6,6 +6,7 @@ import { useStore } from "@/hooks/useStore";
 import styles from "./index.module.less";
 import DefaultAvatar from "@/assets/profile/default-avatar.png";
 import { updateCurrentUser, updateCurrentUserWithFile } from "@/api/user";
+import { User } from "@/api/types";
 
 // Assume an API function exists for updating profile.
 // import { updateUserProfile } from "@/api/user"; // You'll need to create/uncomment this
@@ -16,7 +17,6 @@ const ProfileEdit: React.FC = () => {
 
   const [avatarUrl, setAvatarUrl] = useState<string>(DefaultAvatar);
   const [nickname, setNickname] = useState<string>("");
-  const [originalAvatarUrl, setOriginalAvatarUrl] = useState<string>("");
   const [originalNickname, setOriginalNickname] = useState<string>("");
   const [tempAvatarPath, setTempAvatarPath] = useState<string>("");
 
@@ -27,12 +27,11 @@ const ProfileEdit: React.FC = () => {
       const currentNickname = userState.user.name || "";
       setAvatarUrl(currentAvatar);
       setNickname(currentNickname);
-      setOriginalAvatarUrl(currentAvatar);
       setOriginalNickname(currentNickname);
     }
   });
 
-  const handleAvatarChoose = (event) => {
+  const handleAvatarChoose = (event: any) => {
     const { avatarUrl: tempAvatarUrl } = event.detail;
     if (tempAvatarUrl) {
       console.log("WeChat temporary avatar URL:", tempAvatarUrl);
@@ -47,7 +46,7 @@ const ProfileEdit: React.FC = () => {
     }
   };
 
-  const handleNicknameInput = (event) => {
+  const handleNicknameInput = (event: any) => {
     setNickname(event.detail.value);
   };
 
@@ -63,7 +62,7 @@ const ProfileEdit: React.FC = () => {
         name: nickname,
       };
 
-      let updatedProfile;
+      let updatedProfile: User;
       
       // 如果有新头像需要上传
       if (tempAvatarPath) {
@@ -101,14 +100,15 @@ const ProfileEdit: React.FC = () => {
   const canSaveChanges = useMemo(() => {
     // Ensure user object exists before comparing its properties
     if (!userState.user) return false;
-    // Also, make sure original values are set before allowing save
-    if (originalAvatarUrl === "" && originalNickname === "") return false;
 
     const avatarChanged = tempAvatarPath !== ""; // 有新头像选择
-    const nicknameChanged =
-      nickname !== originalNickname && nickname.trim() !== ""; // ensure nickname is not just empty spaces
+    const nicknameChanged = nickname !== originalNickname; // 昵称有变化
+    
     console.log("avatarChanged", avatarChanged);
     console.log("nicknameChanged", nicknameChanged);
+    console.log("current nickname:", nickname);
+    console.log("original nickname:", originalNickname);
+    
     return avatarChanged || nicknameChanged;
   }, [
     tempAvatarPath,
@@ -123,13 +123,13 @@ const ProfileEdit: React.FC = () => {
         <Text className={styles.label}>头像</Text>
         <Button
           className={styles.avatarButton}
-          openType="chooseAvatar"
+          openType='chooseAvatar'
           onChooseAvatar={handleAvatarChoose}
         >
           <Image
             src={avatarUrl}
             className={styles.avatarImage}
-            mode="aspectFill"
+            mode='aspectFill'
           />
         </Button>
       </View>
@@ -138,8 +138,8 @@ const ProfileEdit: React.FC = () => {
         <Text className={styles.label}>昵称</Text>
         <Input
           className={styles.nicknameInput}
-          type="nickname"
-          placeholder="请输入昵称"
+          type='nickname'
+          placeholder='请输入昵称'
           value={nickname}
           onInput={handleNicknameInput}
         />

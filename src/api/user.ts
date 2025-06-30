@@ -20,7 +20,7 @@ export const getCurrentUser = () => {
  * @returns 更新后的用户信息
  */
 export const updateCurrentUser = (userData: UserUpdate) => {
-    return http.put<User>("/api/v1/users/me", userData);
+    return http.post<User>("/api/v1/users/me", userData);
 };
 
 /**

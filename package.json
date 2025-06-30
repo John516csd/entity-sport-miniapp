@@ -36,6 +36,8 @@
   "author": "",
   "dependencies": {
     "@babel/runtime": "^7.24.4",
+    "@swc/core-darwin-arm64": "^1.12.7",
+    "@swc/wasm": "^1.12.7",
     "@tarojs/components": "4.0.9",
     "@tarojs/helper": "4.0.9",
     "@tarojs/plugin-framework-react": "4.0.9",

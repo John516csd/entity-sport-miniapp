@@ -11,6 +11,12 @@ importers:
       '@babel/runtime':
         specifier: ^7.24.4
         version: 7.26.10
+      '@swc/core-darwin-arm64':
+        specifier: ^1.12.7
+        version: 1.12.7
+      '@swc/wasm':
+        specifier: ^1.12.7
+        version: 1.12.7
       '@tarojs/components':
         specifier: 4.0.9
         version: 4.0.9(@tarojs/helper@4.0.9)(@types/react@18.3.19)(postcss@8.5.3)(react@18.3.1)(rollup@3.29.5)
@@ -1282,6 +1288,12 @@ packages:
     engines: {node: '>=12.10.0', npm: '>=6.0.0'}
     hasBin: true
 
+  '@swc/core-darwin-arm64@1.12.7':
+    resolution: {integrity: sha512-w6BBT0hBRS56yS+LbReVym0h+iB7/PpCddqrn1ha94ra4rZ4R/A91A/rkv+LnQlPqU/+fhqdlXtCJU9mrhCBtA==}
+    engines: {node: '>=10'}
+    cpu: [arm64]
+    os: [darwin]
+
   '@swc/core-darwin-arm64@1.3.96':
     resolution: {integrity: sha512-8hzgXYVd85hfPh6mJ9yrG26rhgzCmcLO0h1TIl8U31hwmTbfZLzRitFQ/kqMJNbIBCwmNH1RU2QcJnL3d7f69A==}
     engines: {node: '>=10'}
@@ -1363,6 +1375,9 @@ packages:
 
   '@swc/types@0.1.19':
     resolution: {integrity: sha512-WkAZaAfj44kh/UFdAQcrMP1I0nwRqpt27u+08LMBYMqmQfwwMofYoMh/48NGkMMRfC4ynpfwRbJuu8ErfNloeA==}
+
+  '@swc/wasm@1.12.7':
+    resolution: {integrity: sha512-IAIm4SH7DadWM3T7hgJ83LcOZgtKyIxNWmfbdlaFZgGBgfIxl1zdLzf78UNNKXVRoxciz8Q17s4T0MNhvBVing==}
 
   '@szmarczak/http-timer@1.1.2':
     resolution: {integrity: sha512-XIB2XbzHTN6ieIjfIMV9hlVcfPU26s2vafYWQcZHWXHOxiaRZYEDKEwdl129Zyg50+foYV2jCgtrqSA6qNuNSA==}
@@ -5809,6 +5824,8 @@ snapshots:
 
   '@stencil/core@2.22.3': {}
 
+  '@swc/core-darwin-arm64@1.12.7': {}
+
   '@swc/core-darwin-arm64@1.3.96':
     optional: true
 
@@ -5867,6 +5884,8 @@ snapshots:
   '@swc/types@0.1.19':
     dependencies:
       '@swc/counter': 0.1.3
+
+  '@swc/wasm@1.12.7': {}
 
   '@szmarczak/http-timer@1.1.2':
     dependencies:

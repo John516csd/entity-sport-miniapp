@@ -76,13 +76,13 @@ const CardSwiper = ({ cards, onCardChange, onConfirm }: CardSwiperProps) => {
 
     return (
         <View className={styles.wrapper}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         >
             <View className={styles.cards_container}>
                 <View className={styles.cards_wrapper} ref={cardsWrapperRef}
-                    style={{
+                  style={{
                         '--active-index': activeIndex,
                         '--move-x': moveX,
                         '--rotate-rate': calculateRotateRate(moveX),
@@ -95,7 +95,8 @@ const CardSwiper = ({ cards, onCardChange, onConfirm }: CardSwiperProps) => {
                         <View className={`${styles.card_item_wrapper}`} key={card.id}>
                             <View className={`${styles.card} ${activeIndex === index ? styles.active : ''}
                                 ${index > activeIndex ? styles.right : ''}
-                                ${index < activeIndex ? styles.left : ''}`} key={card.id}>
+                                ${index < activeIndex ? styles.left : ''}`} key={card.id}
+                            >
                                 <View className={styles.card_avatar}>
                                     <Image src={card.avatar} />
                                 </View>

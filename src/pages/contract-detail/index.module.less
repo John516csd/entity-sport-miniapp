@@ -1,0 +1,283 @@
+.page {
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+.page_header {
+  background: #fff;
+  padding: 20px 24px;
+  border-bottom: 1px solid #f0f0f0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.page_title {
+  font-size: 36px;
+  font-weight: 700;
+  color: #333;
+  text-align: center;
+}
+
+.main_content {
+  padding: 20px;
+}
+
+.loading,
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 20px;
+  text-align: center;
+  min-height: 60vh;
+}
+
+.loading_text,
+.error_text {
+  color: #666;
+  font-size: 28px;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.retry_button,
+.back_button {
+  background: #007aff;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 16px 32px;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+// 合同头部卡片
+.contract_header_card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  padding: 32px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.25);
+}
+
+.header_top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+}
+
+.contract_info {
+  flex: 1;
+}
+
+.contract_number {
+  color: #fff;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+.signing_date {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.status_badge {
+  padding: 8px 16px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  margin-left: 16px;
+  backdrop-filter: blur(10px);
+}
+
+.status_text {
+  color: #fff;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.amount_highlight {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 24px;
+  backdrop-filter: blur(10px);
+  text-align: center;
+}
+
+.amount_label {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 24px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.amount_value {
+  color: #fff;
+  font-size: 48px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+// 详细信息卡片
+.detail_card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  margin-bottom: 20px;
+}
+
+.card_title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.info_grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.info_item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border-left: 4px solid #667eea;
+}
+
+.info_label {
+  font-size: 28px;
+  color: #666;
+  font-weight: 500;
+}
+
+.info_value {
+  font-size: 28px;
+  color: #333;
+  font-weight: 600;
+  text-align: right;
+  flex: 1;
+  margin-left: 16px;
+}
+
+// 描述部分样式
+.description_section {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  backdrop-filter: blur(10px);
+}
+
+.description_label {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 24px;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.description_value {
+  color: #fff;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+// 合同图片卡片
+.image_card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  margin-bottom: 20px;
+}
+
+.image_container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.contract_image {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  min-height: 400px;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  margin-bottom: 16px;
+  background: #f8f9fa;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.02);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+  }
+}
+
+.image_note {
+  color: #666;
+  font-size: 24px;
+  text-align: center;
+  line-height: 1.5;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  width: 100%;
+}
+
+// 状态样式
+.status_active {
+  color: #4caf50 !important;
+}
+
+.status_expired {
+  color: #f44336 !important;
+}
+
+.status_cancelled {
+  color: #999 !important;
+}
+
+.status_default {
+  color: #2196f3 !important;
+}
+
+// 底部操作区域
+.footer_actions {
+  padding: 24px;
+  background: #fff;
+  border-top: 1px solid #f0f0f0;
+  position: sticky;
+  bottom: 0;
+}
+
+.action_button {
+  width: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  padding: 20px;
+  font-size: 32px;
+  font-weight: 700;
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+  
+  &:active {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    transform: scale(0.98);
+  }
+}

@@ -1,6 +1,49 @@
 import Taro from "@tarojs/taro";
 import { BASE_API_URL } from "../constants";
 
+// 自动登出函数
+const autoLogout = () => {
+  // 获取当前页面信息，保存到storage
+  const pages = Taro.getCurrentPages();
+  const currentPage = pages[pages.length - 1];
+  if (currentPage) {
+    const currentRoute = currentPage.route;
+    // 保存当前页面路径，登录成功后回跳
+    Taro.setStorageSync('redirect_after_login', `/${currentRoute}`);
+  }
+  
+  // 清理所有存储的用户数据
+  Taro.removeStorageSync('token');
+  Taro.removeStorageSync('user-storage');
+  Taro.removeStorageSync('membership-storage');
+  Taro.removeStorageSync('appointment-storage');
+  Taro.removeStorageSync('contract-storage');
+  
+  // 显示提示
+  Taro.showToast({
+    title: '登录已过期，请重新登录',
+    icon: 'none',
+    duration: 2000
+  });
+  
+  // 延迟跳转，确保toast显示
+  setTimeout(() => {
+    // 检查当前页面栈深度，避免过深
+    const pages = Taro.getCurrentPages();
+    if (pages.length >= 5) {
+      // 如果页面栈太深，使用reLaunch重置栈
+      Taro.reLaunch({
+        url: '/pages/login/index'
+      });
+    } else {
+      // 正常情况下使用navigateTo保留页面栈
+      Taro.navigateTo({
+        url: '/pages/login/index'
+      });
+    }
+  }, 2000);
+};
+
 // 响应接口
 interface ResponseData<T = any> {
   code: number;
@@ -29,6 +72,7 @@ const requestInterceptor = (options: RequestOptions) => {
   const finalOptions = {
     ...DEFAULT_OPTIONS,
     ...options,
+    timeout: 15000, // 设置15秒超时
     header: {
       'Content-Type': 'application/json',
       'Authorization': token ? `Bearer ${token}` : '',
@@ -43,7 +87,11 @@ const requestInterceptor = (options: RequestOptions) => {
   console.log(`🚀～ request: ${finalOptions.method} ${finalOptions.url}`, finalOptions.data || '');
 
   if (finalOptions.showLoading) {
-    Taro.showLoading({ title: '加载中...' });
+    try {
+      Taro.showLoading({ title: '加载中...' });
+    } catch (showError) {
+      console.warn('showLoading failed:', showError);
+    }
   }
 
   return finalOptions;
@@ -65,14 +113,18 @@ const responseInterceptor = async (res: Taro.request.SuccessCallbackResult<Respo
     }
   }
 
-  // 401 未授权
-  if (statusCode === 401) {
-    Taro.removeStorageSync('token');
-    // 可以在这里处理重新登录逻辑
-    throw new Error('请重新登录');
+  // 401 未授权 或 403 禁止访问
+  if (statusCode === 401 || statusCode === 403) {
+    autoLogout();
+    throw new Error(statusCode === 401 ? '登录已过期' : '访问被拒绝');
   }
 
-  throw new Error(data.message || '请求失败');
+  // 服务器错误
+  if (statusCode >= 500) {
+    throw new Error('服务器错误，请稍后重试');
+  }
+
+  throw new Error(data?.message || '请求失败');
 };
 
 // 统一请求方法
@@ -88,13 +140,28 @@ const request = async <T = any>(options: RequestOptions): Promise<T> => {
     const res = await Taro.request(finalOptions);
     const data = await responseInterceptor(res);
     return data as T;
-  } catch (error) {
+  } catch (error: any) {
     // 对于登录等关键操作，确保错误能够正确传递
     console.error('Request failed:', error);
+    
+    // 处理网络错误
+    if (error?.errMsg) {
+      if (error.errMsg.includes('request:fail') || error.errMsg.includes('Failed to fetch')) {
+        throw new Error('网络连接失败，请检查网络后重试');
+      } else if (error.errMsg.includes('timeout')) {
+        throw new Error('请求超时，请重试');
+      }
+    }
+    
     throw error;
   } finally {
     if (shouldShowLoading) {
-      Taro.hideLoading();
+      // 安全地隐藏loading，避免hideLoading失败
+      try {
+        Taro.hideLoading();
+      } catch (hideError) {
+        console.warn('hideLoading failed:', hideError);
+      }
     }
   }
 };
@@ -132,6 +199,12 @@ const uploadFile = async <T = any>(
 
     console.log(`🚀～ upload response: ${res.statusCode}`, res.data);
 
+    // 处理401/403错误
+    if (res.statusCode === 401 || res.statusCode === 403) {
+      autoLogout();
+      throw new Error(res.statusCode === 401 ? '登录已过期' : '访问被拒绝');
+    }
+
     if (res.statusCode === 200 || res.statusCode === 201) {
       try {
         const responseData = JSON.parse(res.data) as ResponseData<T>;
@@ -144,6 +217,11 @@ const uploadFile = async <T = any>(
         console.error('Failed to parse upload response:', parseError);
         throw new Error('服务器响应格式错误');
       }
+    }
+    
+    // 服务器错误
+    if (res.statusCode >= 500) {
+      throw new Error('服务器错误，请稍后重试');
     }
     
     throw new Error(`上传失败，状态码: ${res.statusCode}`);

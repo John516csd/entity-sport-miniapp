@@ -257,7 +257,7 @@ const DateSelectorDrawer = ({
             <View className={styles.date_selector_header}>
               {currentSelectedDate.year}年{currentSelectedDate.month}月
             </View>
-            <View className={styles.date_selector} data-dom="date_selector">
+            <View className={styles.date_selector} data-dom='date_selector'>
               <View className={styles.date_selector_list}>
                 {next14Days.map((date) => (
                   <View
@@ -281,7 +281,7 @@ const DateSelectorDrawer = ({
           {/* 时间选择 */}
           <View
             className={styles.time_selector_wrapper}
-            data-dom="date_selector"
+            data-dom='date_selector'
           >
             {loading ? (
               <View className={styles.loading}>加载中...</View>

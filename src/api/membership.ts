@@ -57,10 +57,10 @@ export const getMyContracts = (skip = 0, limit = 100) => {
 };
 
 /**
- * 根据ID获取合同信息
+ * 根据ID获取合同详情（只能查看自己的合同）
  * @param contractId - 合同ID
- * @returns 合同信息
+ * @returns 合同详情
  */
-export const getContractById = (contractId: number) => {
-    return http.get<MembershipContractResponse>(`/api/v1/contracts/${contractId}`);
+export const getMyContractDetail = (contractId: number) => {
+    return http.get<MembershipContractResponse>(`/api/v1/contracts/my-contracts/${contractId}`);
 }; 

@@ -47,7 +47,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
           <Image
             className={styles.coach_avatar}
             src={`${BASE_API_URL}${appointment.coach.avatar_url}`}
-            mode="aspectFill"
+            mode='aspectFill'
           />
           <Text className={styles.frostedMain}>{appointment.coach.name}</Text>
         </View>

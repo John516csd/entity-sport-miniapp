@@ -1,6 +1,5 @@
 import { View, Button } from '@tarojs/components'
-import { useLoad, navigateTo } from '@tarojs/taro'
-import Taro from '@tarojs/taro'
+import Taro, { useLoad, navigateTo } from '@tarojs/taro'
 import styles from './index.module.less'
 import HomeHeroBanner from '../../components/home-hero-banner'
 import CtaContainer from '../../components/cta-container'

@@ -75,6 +75,33 @@ function WeappLoginButton(props: WeappLoginButtonProps) {
         title: "登录成功",
         icon: "success",
       });
+
+      // 检查是否有需要跳转的页面
+      const redirectUrl = Taro.getStorageSync('redirect_after_login');
+      if (redirectUrl) {
+        // 清除重定向信息
+        Taro.removeStorageSync('redirect_after_login');
+        
+        // 延迟跳转，让toast显示完
+        setTimeout(() => {
+          // 检查页面栈，如果只有当前登录页面，说明是reLaunch过来的，需要直接跳转
+          const pages = Taro.getCurrentPages();
+          if (pages.length === 1) {
+            Taro.reLaunch({
+              url: redirectUrl
+            });
+          } else {
+            Taro.navigateBack();
+          }
+        }, 1500);
+      } else {
+        // 如果没有重定向页面，跳转到首页
+        setTimeout(() => {
+          Taro.reLaunch({
+            url: '/pages/index/index'
+          });
+        }, 1500);
+      }
     } catch (error) {
       Taro.showToast({
         title: "登录失败",
@@ -87,10 +114,10 @@ function WeappLoginButton(props: WeappLoginButtonProps) {
 
   return (
     <Button
-      openType="getPhoneNumber"
+      openType='getPhoneNumber'
       onGetPhoneNumber={handleGetPhoneNumber}
       loading={isLogin}
-      className={`login-button`}
+      className='login-button'
     >
       手机号快捷登录
     </Button>
