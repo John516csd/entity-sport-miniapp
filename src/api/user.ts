@@ -78,22 +78,6 @@ export const uploadUserAvatarWithData = async (avatarPath: string, userData: Use
 };
 
 /**
- * 更新用户信息（支持文件上传）
- * 策略：使用单一 multipart 请求同时上传头像和用户信息
- * @param userData - 要更新的用户信息
- * @param avatarPath - 头像文件路径（可选）
- * @returns 更新后的用户信息
- */
-export const updateCurrentUserWithFile = async (userData: UserUpdate, avatarPath?: string) => {
-    if (avatarPath) {
-        console.log("🔧 使用 multipart 请求同时更新头像和用户信息");
-        uploadUserAvatarWithData(avatarPath, userData);
-    }
-    console.log("🔧 仅更新用户信息（无头像）");
-    return updateCurrentUser(userData);
-};
-
-/**
  * 获取当前用户的会员信息
  * @returns 会员信息列表
  */

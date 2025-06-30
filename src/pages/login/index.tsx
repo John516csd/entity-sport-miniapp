@@ -3,6 +3,8 @@ import { View } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import './index.less';
 import WeappLoginButton from '../../components/wx-login-wrapper';
+import { useUserStore } from '../../store/user';
+import { User } from '../../api';
 
 const Login: React.FC = () => {
     // 检查是否已经登录
@@ -22,10 +24,19 @@ const Login: React.FC = () => {
         }
     }, []);
 
+    // 登录成功回调
+    const handleLoginSuccess = async (token: string, userInfo?: User) => {
+        try {
+            // 使用store管理登录状态
+            await useUserStore.login(token, userInfo);
+        } catch (error) {
+            console.error('保存登录信息失败:', error);
+        }
+    };
 
     return (
         <View className='login-page'>
-            <WeappLoginButton />
+            <WeappLoginButton onSuccess={handleLoginSuccess} />
         </View>
     );
 };

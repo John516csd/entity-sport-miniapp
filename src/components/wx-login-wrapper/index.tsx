@@ -2,8 +2,8 @@
 import { Button } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import { useState } from "react";
-import "./index.less";
 import { login, User } from "@/api";
+import "./index.less";
 
 interface WeappLoginButtonProps {
   className?: string;
@@ -15,26 +15,22 @@ function WeappLoginButton(props: WeappLoginButtonProps) {
   const [isLogin, setIsLogin] = useState(false);
 
 
-  // 处理获取用户信息
-  const handleGetUserInfo = async (): Promise<{
-    encryptedData: string;
-    iv: string;
-  }> => {
-    try {
-      const profileRes = await Taro.getUserProfile({
-        desc: "用于完善会员资料",
-      });
+  // 检查用户是否需要完善资料
+  const checkUserProfileComplete = (user: User | undefined): boolean => {
+    if (!user) return false;
+    // 检查是否有头像和昵称
+    const hasAvatar = Boolean(user.avatar_url);
+    const hasNickname = Boolean(user.name && user.name !== '微信用户');
 
-      const { encryptedData, iv } = profileRes;
-      return { encryptedData, iv };
-    } catch (error) {
-      console.error("获取用户信息失败:", error);
-      // 即使获取用户信息失败，也允许继续登录
-      return { encryptedData: "", iv: "" };
-    }
+    console.log("hasAvatar", hasAvatar);
+    console.log("hasNickname", hasNickname);
+    console.log("user", user);
+    return hasAvatar && hasNickname;
   };
 
-  async function handleGetPhoneNumber(e?) {
+
+  // 处理手机号授权登录
+  async function handleGetPhoneNumber(e?: any) {
     try {
       setIsLogin(true);
 
@@ -42,8 +38,6 @@ function WeappLoginButton(props: WeappLoginButtonProps) {
       if (e && e.detail.errMsg && e.detail.errMsg !== "getPhoneNumber:ok") {
         throw new Error(e.detail.errMsg);
       }
-
-      const { encryptedData, iv } = await handleGetUserInfo();
 
       // 获取登录code
       const loginResult = await Taro.login();
@@ -53,14 +47,9 @@ function WeappLoginButton(props: WeappLoginButtonProps) {
 
       const { code } = loginResult;
 
-      // 使用封装的请求方法
-      const res = await login({
-        code,
-        encrypted_data: encryptedData,
-        iv: iv,
-      });
-
-      const { access_token, user_info } = res;
+      // 先尝试仅使用手机号登录，获取基本用户信息
+      const basicLoginRes = await login({ code });
+      const { access_token, user_info: basicUserInfo } = basicLoginRes;
 
       // 确保存储token正确
       if (access_token) {
@@ -69,14 +58,49 @@ function WeappLoginButton(props: WeappLoginButtonProps) {
         throw new Error("登录响应中没有access_token");
       }
 
-      onSuccess && onSuccess(access_token, user_info);
+      // 检查用户资料是否完整
+      const isProfileComplete = checkUserProfileComplete(basicUserInfo);
+      let finalUserInfo = basicUserInfo;
+
+      if (!isProfileComplete) {
+        // 用户资料不完整，询问是否要完善资料
+        try {
+          const modalRes = await Taro.showModal({
+            title: "完善资料",
+            content: "为了更好的使用体验，建议您完善头像和昵称信息",
+            confirmText: "去完善",
+            cancelText: "稍后再说",
+          });
+
+          if (modalRes.confirm) {
+            // 引导用户到个人资料编辑页面手动完善
+            Taro.showToast({
+              title: "即将跳转到资料编辑页",
+              icon: "none",
+              duration: 1500,
+            });
+            
+            setTimeout(() => {
+              Taro.navigateTo({
+                url: '/pages/profile-edit/index'
+              });
+            }, 1500);
+          }
+        } catch (profileError) {
+          console.warn("获取用户信息失败，使用基本信息:", profileError);
+          // 用户拒绝授权或其他错误，使用基本信息继续
+        }
+      }
+
+      // 完成登录流程
+      onSuccess && onSuccess(access_token, finalUserInfo);
 
       Taro.showToast({
         title: "登录成功",
         icon: "success",
       });
 
-      // 检查是否有需要跳转的页面
+      // 处理页面跳转
       const redirectUrl = Taro.getStorageSync('redirect_after_login');
       if (redirectUrl) {
         // 清除重定向信息
@@ -84,7 +108,6 @@ function WeappLoginButton(props: WeappLoginButtonProps) {
         
         // 延迟跳转，让toast显示完
         setTimeout(() => {
-          // 检查页面栈，如果只有当前登录页面，说明是reLaunch过来的，需要直接跳转
           const pages = Taro.getCurrentPages();
           if (pages.length === 1) {
             Taro.reLaunch({
@@ -95,14 +118,22 @@ function WeappLoginButton(props: WeappLoginButtonProps) {
           }
         }, 1500);
       } else {
-        // 如果没有重定向页面，跳转到首页
-        setTimeout(() => {
-          Taro.reLaunch({
-            url: '/pages/index/index'
-          });
-        }, 1500);
+        // 如果没有重定向页面，根据当前页面决定是否跳转
+        const pages = Taro.getCurrentPages();
+        const currentPage = pages[pages.length - 1];
+        
+        // 如果当前在登录页面，则跳转到首页；如果在其他页面（如个人资料页），则留在当前页面
+        if (currentPage?.route === 'pages/login/index') {
+          setTimeout(() => {
+            Taro.reLaunch({
+              url: '/pages/index/index'
+            });
+          }, 1500);
+        }
+        // 在其他页面登录成功后不跳转，留在当前页面
       }
     } catch (error) {
+      console.error("登录失败:", error);
       Taro.showToast({
         title: "登录失败",
         icon: "none",

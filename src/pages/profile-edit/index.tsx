@@ -1,15 +1,11 @@
 import { View, Text, Image, Input, Button } from "@tarojs/components";
 import Taro, { useLoad } from "@tarojs/taro";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { useUserStore } from "@/store/user";
 import { useStore } from "@/hooks/useStore";
 import styles from "./index.module.less";
 import DefaultAvatar from "@/assets/profile/default-avatar.png";
-import { updateCurrentUser, updateCurrentUserWithFile } from "@/api/user";
-import { User } from "@/api/types";
-
-// Assume an API function exists for updating profile.
-// import { updateUserProfile } from "@/api/user"; // You'll need to create/uncomment this
+import { updateCurrentUser, uploadUserAvatarWithData } from "@/api/user";
 
 const ProfileEdit: React.FC = () => {
   const userState = useStore(useUserStore);
@@ -57,20 +53,34 @@ const ProfileEdit: React.FC = () => {
     }
 
     try {
-      // 准备更新数据
-      const updateData = {
-        name: nickname,
-      };
-
-      let updatedProfile: User;
+      let updatedProfile = userState.user;
       
-      // 如果有新头像需要上传
-      if (tempAvatarPath) {
-        console.log("Uploading avatar with user data:", updateData);
-        updatedProfile = await updateCurrentUserWithFile(updateData, tempAvatarPath);
-      } else {
-        console.log("Updating user data without avatar:", updateData);
+      const avatarChanged = tempAvatarPath !== "";
+      const nicknameChanged = nickname !== originalNickname;
+      
+      // 第一步：如果有新头像，先上传头像
+      if (avatarChanged) {
+        console.log("Step 1: Uploading avatar");
+        Taro.showToast({ title: "正在上传头像...", icon: "loading" });
+        
+        updatedProfile = await uploadUserAvatarWithData(tempAvatarPath, {});
+        console.log("Avatar upload success:", updatedProfile);
+      }
+      
+      // 第二步：如果昵称有变化，再更新昵称
+      if (nicknameChanged) {
+        console.log("Step 2: Updating nickname");
+        Taro.showToast({ title: "正在更新昵称...", icon: "loading" });
+        
+        const updateData = { name: nickname };
         updatedProfile = await updateCurrentUser(updateData);
+        console.log("Nickname update success:", updatedProfile);
+      }
+      
+      // 如果都没有变化，直接返回
+      if (!avatarChanged && !nicknameChanged) {
+        Taro.showToast({ title: "没有需要保存的更改", icon: "none" });
+        return;
       }
 
       // 更新本地状态
